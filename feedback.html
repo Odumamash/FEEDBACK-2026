@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Oasis Doctors Plaza – Feedback</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    :root {
+      --teal: #0d7377;
+      --teal-light: #14a085;
+      --teal-pale: #e8f5f4;
+      --gold: #c9a84c;
+      --dark: #111827;
+      --mid: #4b5563;
+      --light: #f8fafb;
+      --white: #ffffff;
+      --border: #d1e8e6;
+      --radius: 16px;
+      --shadow: 0 4px 32px rgba(13,115,119,0.10);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--light);
+      color: var(--dark);
+      min-height: 100vh;
+    }
+
+    /* HEADER */
+    header {
+      background: linear-gradient(135deg, var(--teal) 0%, #0a5a5e 100%);
+      color: white;
+      padding: 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 220px; height: 220px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 50%;
+    }
+
+    header::after {
+      content: '';
+      position: absolute;
+      bottom: -40px; left: 30%;
+      width: 140px; height: 140px;
+      background: rgba(201,168,76,0.12);
+      border-radius: 50%;
+    }
+
+    .header-inner {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 36px 24px 32px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      position: relative;
+      z-index: 1;
+      flex-wrap: wrap;
+    }
+
+    .logo-img-wrap {
+      flex-shrink: 0;
+      background: white;
+      border-radius: 12px;
+      padding: 8px 14px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+    }
+
+    .header-logo {
+      height: 72px;
+      width: auto;
+      display: block;
+    }
+
+    .header-text .tagline {
+      font-size: 0.88rem;
+      opacity: 0.75;
+      margin-top: 4px;
+      font-style: italic;
+    }
+
+    .contact-strip {
+      background: rgba(0,0,0,0.18);
+      padding: 10px 24px;
+    }
+
+    .contact-strip-inner {
+      max-width: 860px;
+      margin: 0 auto;
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .contact-strip span {
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.8);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .contact-strip i { color: var(--gold); font-size: 0.75rem; }
+
+    /* PROGRESS */
+    .progress-wrap {
+      height: 4px;
+      background: var(--border);
+    }
+
+    #progressBar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--teal), var(--gold));
+      transition: width 0.4s ease;
+    }
+
+    /* MAIN */
+    main {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 40px 20px 60px;
+    }
+
+    .form-intro {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    .form-intro h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2rem;
+      font-weight: 400;
+      color: var(--teal);
+    }
+
+    .form-intro p {
+      font-size: 0.9rem;
+      color: var(--mid);
+      margin-top: 6px;
+    }
+
+    /* CARD */
+    .card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 32px;
+      margin-bottom: 20px;
+      border: 1px solid var(--border);
+      animation: fadeUp 0.4s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .card:nth-child(2) { animation-delay: 0.05s; }
+    .card:nth-child(3) { animation-delay: 0.10s; }
+    .card:nth-child(4) { animation-delay: 0.15s; }
+    .card:nth-child(5) { animation-delay: 0.20s; }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+
+    .section-title .icon-wrap {
+      width: 36px; height: 36px;
+      background: var(--teal-pale);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--teal);
+      font-size: 0.9rem;
+    }
+
+    .section-title h3 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.15rem;
+      font-weight: 400;
+      color: var(--dark);
+    }
+
+    /* FORM FIELDS */
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 560px) { .form-row { grid-template-columns: 1fr; } }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+
+    .field label {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--mid);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .field input[type="text"],
+    .field input[type="email"],
+    .field input[type="tel"],
+    .field textarea {
+      padding: 12px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      color: var(--dark);
+      transition: border-color 0.2s, box-shadow 0.2s;
+      background: var(--light);
+      outline: none;
+      resize: vertical;
+    }
+
+    .field input:focus,
+    .field textarea:focus {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(13,115,119,0.12);
+      background: white;
+    }
+
+    /* RADIO PILLS */
+    .pill-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .pill-group input[type="radio"] { display: none; }
+
+    .pill-group label {
+      padding: 9px 18px;
+      border-radius: 50px;
+      border: 1.5px solid var(--border);
+      font-size: 0.88rem;
+      cursor: pointer;
+      color: var(--mid);
+      transition: all 0.18s;
+      background: white;
+      font-weight: 500;
+    }
+
+    .pill-group input[type="radio"]:checked + label {
+      background: var(--teal);
+      border-color: var(--teal);
+      color: white;
+      box-shadow: 0 2px 10px rgba(13,115,119,0.3);
+    }
+
+    .pill-group label:hover {
+      border-color: var(--teal);
+      color: var(--teal);
+    }
+
+    /* STAR RATING */
+    .star-row {
+      display: flex;
+      flex-direction: row-reverse;
+      justify-content: flex-end;
+      gap: 4px;
+      margin: 8px 0 4px;
+    }
+
+    .star-row input[type="radio"] { display: none; }
+
+    .star-row label {
+      font-size: 1.8rem;
+      color: #d1d5db;
+      cursor: pointer;
+      transition: color 0.15s;
+      line-height: 1;
+    }
+
+    .star-row label::before { content: '★'; }
+
+    .star-row input:checked ~ label,
+    .star-row label:hover,
+    .star-row label:hover ~ label {
+      color: var(--gold);
+    }
+
+    .star-label-text {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--mid);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    /* SLIDER */
+    .slider-wrap { margin: 10px 0; }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: var(--border);
+      outline: none;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 22px; height: 22px;
+      background: var(--teal);
+      border-radius: 50%;
+      box-shadow: 0 2px 8px rgba(13,115,119,0.35);
+      transition: transform 0.15s;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+
+    .slider-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      color: var(--mid);
+      margin-top: 6px;
+    }
+
+    .slider-value-badge {
+      display: inline-block;
+      background: var(--teal);
+      color: white;
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 2px 12px;
+      border-radius: 50px;
+      margin-top: 8px;
+    }
+
+    /* MATRIX TABLE */
+    .matrix-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+
+    .matrix-table th {
+      padding: 10px 8px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      color: var(--teal);
+      background: var(--teal-pale);
+    }
+
+    .matrix-table th:first-child { text-align: left; border-radius: 8px 0 0 8px; }
+    .matrix-table th:last-child { border-radius: 0 8px 8px 0; }
+
+    .matrix-table td {
+      padding: 12px 8px;
+      text-align: center;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .matrix-table td:first-child {
+      text-align: left;
+      font-weight: 500;
+      color: var(--dark);
+      padding-left: 12px;
+    }
+
+    .matrix-table tr:last-child td { border-bottom: none; }
+    .matrix-table tr:hover td { background: var(--teal-pale); }
+
+    .matrix-table input[type="radio"] { display: none; }
+
+    .matrix-table label {
+      display: inline-flex;
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-size: 0;
+    }
+
+    .matrix-table input:checked + label {
+      background: var(--teal);
+      border-color: var(--teal);
+      box-shadow: 0 2px 8px rgba(13,115,119,0.3);
+    }
+
+    .matrix-table input:checked + label::after {
+      content: '✓';
+      color: white;
+      font-size: 0.75rem;
+    }
+
+    .matrix-table label:hover { border-color: var(--teal); background: var(--teal-pale); }
+
+    /* EMOJI OPTIONS */
+    .emoji-group {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .emoji-group input[type="radio"] { display: none; }
+
+    .emoji-group label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1.5px solid var(--border);
+      cursor: pointer;
+      font-size: 0.8rem;
+      color: var(--mid);
+      transition: all 0.18s;
+      background: white;
+      font-weight: 500;
+    }
+
+    .emoji-group label .emoji { font-size: 1.6rem; }
+
+    .emoji-group input:checked + label {
+      border-color: var(--teal);
+      background: var(--teal-pale);
+      color: var(--teal);
+      box-shadow: 0 2px 12px rgba(13,115,119,0.15);
+    }
+
+    .emoji-group label:hover { border-color: var(--teal); }
+
+    /* PRIVACY */
+    .privacy-box {
+      background: var(--teal-pale);
+      border-left: 4px solid var(--teal);
+      border-radius: 10px;
+      padding: 14px 16px;
+      font-size: 0.83rem;
+      color: var(--teal);
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      margin-top: 4px;
+    }
+
+    /* ACTIONS */
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-top: 28px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 13px 28px;
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-ghost {
+      background: white;
+      border: 1.5px solid var(--border);
+      color: var(--mid);
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--teal);
+      color: var(--teal);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--teal), var(--teal-light));
+      color: white;
+      box-shadow: 0 4px 16px rgba(13,115,119,0.35);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(13,115,119,0.4);
+    }
+
+    .btn-primary:active { transform: translateY(0); }
+
+    /* MODAL */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+    }
+
+    .modal-overlay.active { display: flex; }
+
+    .modal-box {
+      background: white;
+      border-radius: 20px;
+      padding: 48px 40px;
+      text-align: center;
+      max-width: 420px;
+      width: 90%;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      animation: popIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.85); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .modal-box .check-circle {
+      width: 72px; height: 72px;
+      background: linear-gradient(135deg, var(--teal), var(--teal-light));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 2rem;
+      color: white;
+    }
+
+    .modal-box h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.7rem;
+      font-weight: 400;
+      color: var(--dark);
+      margin-bottom: 12px;
+    }
+
+    .modal-box p {
+      color: var(--mid);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin-bottom: 8px;
+    }
+
+    .modal-box .btn-primary { margin: 20px auto 0; justify-content: center; }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 0.8rem;
+      color: #9ca3af;
+      border-top: 1px solid var(--border);
+    }
+
+    footer span { color: var(--teal); }
+
+    /* CHECKBOX PILLS */
+    .checkbox-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .check-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 18px;
+      border-radius: 50px;
+      border: 1.5px solid var(--border);
+      font-size: 0.88rem;
+      cursor: pointer;
+      color: var(--mid);
+      background: white;
+      font-weight: 500;
+      transition: all 0.18s;
+      user-select: none;
+    }
+
+    .check-pill input[type="checkbox"] { display: none; }
+
+    .check-pill:has(input:checked) {
+      background: var(--teal);
+      border-color: var(--teal);
+      color: white;
+      box-shadow: 0 2px 10px rgba(13,115,119,0.3);
+    }
+
+    .check-pill:hover { border-color: var(--teal); color: var(--teal); }
+    .check-pill:has(input:checked):hover { color: white; }
+
+    /* NPS */
+    .nps-wrap { width: 100%; }
+
+    .nps-grid {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+
+    .nps-grid input[type="radio"] { display: none; }
+
+    .nps-grid label {
+      width: 44px; height: 44px;
+      border-radius: 10px;
+      border: 1.5px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--mid);
+      transition: all 0.18s;
+      background: white;
+    }
+
+    .nps-grid input:checked + label {
+      background: var(--teal);
+      border-color: var(--teal);
+      color: white;
+      box-shadow: 0 2px 10px rgba(13,115,119,0.3);
+      transform: scale(1.1);
+    }
+
+    .nps-grid label:hover { border-color: var(--teal); color: var(--teal); }
+
+    .nps-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--mid);
+      margin-top: 4px;
+    }
+
+    .nps-badge {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 4px 16px;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .nps-badge.detractor { background: #fee2e2; color: #dc2626; }
+    .nps-badge.passive   { background: #fef9c3; color: #ca8a04; }
+    .nps-badge.promoter  { background: var(--teal-pale); color: var(--teal); }
+
+    /* HIDDEN */
+    .hidden { display: none !important; }
+    .divider { height: 1px; background: var(--border); margin: 20px 0; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo-img-wrap">
+      <img src="data:image/png;base64,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" alt="Oasis Health Doctors Plaza" class="header-logo"/>
+    </div>
+    <div class="header-text">
+      <p class="tagline">We value your feedback</p>
+    </div>
+  </div>
+  <div class="contact-strip">
+    <div class="contact-strip-inner">
+      <span><i class="fas fa-map-marker-alt"></i> Salama Road, P.O Box 504 – 40300 Homabay</span>
+      <span><i class="fas fa-phone"></i> +254 792 545 414</span>
+      <span><i class="fas fa-envelope"></i> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="7e171018113e111f0d170d1a111d0a110c0d0e121f041f501d1150151b">[email&#160;protected]</a></span>
+    </div>
+  </div>
+</header>
+
+<div class="progress-wrap">
+  <div id="progressBar"></div>
+</div>
+
+<main>
+  <div class="form-intro">
+    <h2>Customer Feedback Form</h2>
+    <p>Estimated completion time: 2–3 minutes &nbsp;·&nbsp; Your response is confidential</p>
+  </div>
+
+  <form id="feedbackForm">
+
+    <!-- Section 1: Customer Info -->
+    <div class="card">
+      <div class="section-title">
+        <div class="icon-wrap"><i class="fas fa-user"></i></div>
+        <h3>Customer Information</h3>
+      </div>
+      <div class="form-row">
+        <div class="field">
+          <label>Email Address *</label>
+          <input type="email" name="email" placeholder="you@example.com" required/>
+        </div>
+        <div class="field">
+          <label>Phone Number</label>
+          <input type="tel" name="phone" placeholder="+254 7XX XXX XXX" required/>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 2: How did you know us -->
+    <div class="card">
+      <div class="section-title">
+        <div class="icon-wrap"><i class="fas fa-search"></i></div>
+        <h3>How Did You Know About Us?</h3>
+      </div>
+      <div class="pill-group">
+        <input type="radio" name="source" id="s1" value="social-media"/>
+        <label for="s1">📱 Social Media</label>
+        <input type="radio" name="source" id="s2" value="friend-family"/>
+        <label for="s2">👥 Friend / Family</label>
+        <input type="radio" name="source" id="s3" value="referral"/>
+        <label for="s3">🏥 Referral</label>
+        <input type="radio" name="source" id="s4" value="signage"/>
+        <label for="s4">🪧 Signage</label>
+        <input type="radio" name="source" id="s5" value="other"/>
+        <label for="s5">✏️ Other</label>
+      </div>
+      <div class="field hidden" id="otherSourceGroup" style="margin-top:14px;">
+        <label>Please specify</label>
+        <input type="text" name="otherSource" placeholder="How did you find us?"/>
+      </div>
+    </div>
+
+    <!-- Section 2b: Department Visited -->
+    <div class="card">
+      <div class="section-title">
+        <div class="icon-wrap"><i class="fas fa-hospital"></i></div>
+        <h3>Department(s) Visited</h3>
+      </div>
+      <p style="font-size:0.85rem;color:var(--mid);margin-bottom:14px;">Select all that apply during your visit today:</p>
+      <div class="checkbox-grid" id="deptCheckboxes">
+        <label class="check-pill"><input type="checkbox" name="deptVisited" value="reception"/> 🏢 Reception</label>
+        <label class="check-pill"><input type="checkbox" name="deptVisited" value="consultation"/> 👨‍⚕️ Consultation</label>
+        <label class="check-pill"><input type="checkbox" name="deptVisited" value="pharmacy"/> 💊 Pharmacy</label>
+        <label class="check-pill"><input type="checkbox" name="deptVisited" value="lab"/> 🧪 Lab</label>
+        <label class="check-pill"><input type="checkbox" name="deptVisited" value="optical"/> 👓 Optical</label>
+        <label class="check-pill"><input type="checkbox" name="deptVisited" value="nutrition"/> 🥗 Nutrition</label>
+      </div>
+    </div>
+
+    <!-- Section 3: Facility Rating -->
+    <div class="card">
+      <div class="section-title">
+        <div class="icon-wrap"><i class="fas fa-star"></i></div>
+        <h3>Facility Rating</h3>
+      </div>
+
+      <div class="star-label-text">General Appearance &amp; Accessibility</div>
+      <div class="star-row">
+        <input type="radio" name="appearance" id="app5" value="5"/>
+        <label for="app5" title="Excellent"></label>
+        <input type="radio" name="appearance" id="app4" value="4"/>
+        <label for="app4" title="Good"></label>
+        <input type="radio" name="appearance" id="app3" value="3"/>
+        <label for="app3" title="Average"></label>
+        <input type="radio" name="appearance" id="app2" value="2"/>
+        <label for="app2" title="Below Average"></label>
+        <input type="radio" name="appearance" id="app1" value="1"/>
+        <label for="app1" title="Poor"></label>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="star-label-text">Staff Response Speed</div>
+      <div class="slider-wrap">
+        <input type="range" id="responseSpeed" name="responseSpeed" min="1" max="5" value="3"/>
+        <div class="slider-labels">
+          <span>Very Slow</span>
+          <span>Very Fast</span>
+        </div>
+        <div><span class="slider-value-badge" id="sliderBadge">3 / 5</span></div>
+      </div>
+    </div>
+
+    <!-- Section 4: Department Satisfaction Matrix -->
+    <div class="card">
+      <div class="section-title">
+        <div class="icon-wrap"><i class="fas fa-clipboard-list"></i></div>
+        <h3>Department Satisfaction</h3>
+      </div>
+      <p style="font-size:0.85rem;color:var(--mid);margin-bottom:16px;">Rate your satisfaction with each department:</p>
+      <div style="overflow-x:auto;">
+        <table class="matrix-table">
+          <thead>
+            <tr>
+              <th>Department</th>
+              <th>😄 Very Satisfied</th>
+              <th>🙂 Satisfied</th>
+              <th>😕 Dissatisfied</th>
+              <th>😞 Very Dissatisfied</th>
+            </tr>
+          </thead>
+          <tbody id="matrixBody">
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Section 5: Additional Feedback -->
+    <div class="card">
+      <div class="section-title">
+        <div class="icon-wrap"><i class="fas fa-comments"></i></div>
+        <h3>Additional Feedback</h3>
+      </div>
+
+      <div class="star-label-text" style="margin-bottom:8px;">Waiting Time</div>
+      <div class="pill-group" style="margin-bottom:20px;">
+        <input type="radio" name="waitingTime" id="w1" value="very-long"/>
+        <label for="w1">⏳ Very Long</label>
+        <input type="radio" name="waitingTime" id="w2" value="long"/>
+        <label for="w2">🕐 Long</label>
+        <input type="radio" name="waitingTime" id="w3" value="average"/>
+        <label for="w3">⏱ Average</label>
+        <input type="radio" name="waitingTime" id="w4" value="not-long"/>
+        <label for="w4">✅ Not Long</label>
+      </div>
+
+      <div class="star-label-text" style="margin-bottom:8px;">Was the service professional?</div>
+      <div class="emoji-group" style="margin-bottom:20px;">
+        <input type="radio" name="professionalService" id="prof-yes" value="yes"/>
+        <label for="prof-yes">
+          <span class="emoji">👍</span>Yes
+        </label>
+        <input type="radio" name="professionalService" id="prof-no" value="no"/>
+        <label for="prof-no">
+          <span class="emoji">👎</span>No
+        </label>
+      </div>
+      <div class="field hidden" id="professionalServiceDetails">
+        <label>Please provide details</label>
+        <textarea name="professionalServiceText" rows="3" placeholder="Tell us what happened..."></textarea>
+      </div>
+
+      <div class="field">
+        <label>Unaddressed Concerns (Optional)</label>
+        <textarea name="unaddressedConcerns" rows="3" placeholder="Any concerns that were not addressed during your visit..."></textarea>
+      </div>
+
+      <div class="field">
+        <label>Service Improvements &amp; Suggestions</label>
+        <textarea name="serviceImprovements" rows="4" placeholder="We'd love your ideas on how we can serve you better..."></textarea>
+      </div>
+
+      <div class="privacy-box">
+        <i class="fas fa-shield-alt" style="margin-top:2px;flex-shrink:0;"></i>
+        <span>Your feedback is confidential and will be used solely to improve our services. We respect your privacy and will not share your personal information with third parties.</span>
+      </div>
+    </div>
+
+    <!-- Section 6: Privacy & Dignity + Billing -->
+    <div class="card">
+      <div class="section-title">
+        <div class="icon-wrap"><i class="fas fa-hand-holding-heart"></i></div>
+        <h3>Care & Billing Experience</h3>
+      </div>
+
+      <div class="star-label-text" style="margin-bottom:8px;">Were you treated with respect and dignity?</div>
+      <div class="emoji-group" style="margin-bottom:22px;">
+        <input type="radio" name="dignity" id="dig-always" value="always"/>
+        <label for="dig-always"><span class="emoji">😊</span>Always</label>
+        <input type="radio" name="dignity" id="dig-mostly" value="mostly"/>
+        <label for="dig-mostly"><span class="emoji">🙂</span>Mostly</label>
+        <input type="radio" name="dignity" id="dig-sometimes" value="sometimes"/>
+        <label for="dig-sometimes"><span class="emoji">😐</span>Sometimes</label>
+        <input type="radio" name="dignity" id="dig-no" value="no"/>
+        <label for="dig-no"><span class="emoji">😞</span>Not Really</label>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="star-label-text" style="margin-bottom:8px;">Was the billing process clear and transparent?</div>
+      <div class="emoji-group" style="margin-bottom:16px;">
+        <input type="radio" name="billing" id="bill-yes" value="yes"/>
+        <label for="bill-yes"><span class="emoji">✅</span>Yes, very clear</label>
+        <input type="radio" name="billing" id="bill-partial" value="partial"/>
+        <label for="bill-partial"><span class="emoji">🤔</span>Somewhat</label>
+        <input type="radio" name="billing" id="bill-no" value="no"/>
+        <label for="bill-no"><span class="emoji">❌</span>Not clear</label>
+      </div>
+      <div class="field hidden" id="billingDetails">
+        <label>What was unclear about billing?</label>
+        <textarea name="billingText" rows="2" placeholder="e.g. charges not explained, unexpected costs, NHIF/SHA issues..."></textarea>
+      </div>
+    </div>
+
+    <!-- Section 7: NPS -->
+    <div class="card">
+      <div class="section-title">
+        <div class="icon-wrap"><i class="fas fa-thumbs-up"></i></div>
+        <h3>Would You Recommend Us?</h3>
+      </div>
+      <p style="font-size:0.85rem;color:var(--mid);margin-bottom:18px;">On a scale of 0–10, how likely are you to recommend Oasis Doctors Plaza to a friend or family member?</p>
+      <div class="nps-wrap">
+        <div class="nps-grid" id="npsGrid"></div>
+        <div class="nps-labels">
+          <span>Not likely at all</span>
+          <span>Extremely likely</span>
+        </div>
+        <div id="npsSelected" class="nps-badge hidden"></div>
+      </div>
+    </div>
+
+    <!-- Section 8: Follow-up Consent -->
+    <div class="card">
+      <div class="section-title">
+        <div class="icon-wrap"><i class="fas fa-phone-alt"></i></div>
+        <h3>Follow-up Consent</h3>
+      </div>
+      <p style="font-size:0.85rem;color:var(--mid);margin-bottom:14px;">May we contact you regarding your feedback to follow up or resolve any concerns?</p>
+      <div class="emoji-group">
+        <input type="radio" name="followUp" id="fu-yes" value="yes"/>
+        <label for="fu-yes"><span class="emoji">📞</span>Yes, you may contact me</label>
+        <input type="radio" name="followUp" id="fu-no" value="no"/>
+        <label for="fu-no"><span class="emoji">🔒</span>No, keep it anonymous</label>
+      </div>
+      <div class="field hidden" id="followUpDetails" style="margin-top:14px;">
+        <label>Preferred Contact Method</label>
+        <div class="pill-group">
+          <input type="radio" name="contactMethod" id="cm1" value="phone"/>
+          <label for="cm1">📱 Phone Call</label>
+          <input type="radio" name="contactMethod" id="cm2" value="whatsapp"/>
+          <label for="cm2">💬 WhatsApp</label>
+          <input type="radio" name="contactMethod" id="cm3" value="email"/>
+          <label for="cm3">📧 Email</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="button" id="clearForm" class="btn btn-ghost">
+        <i class="fas fa-eraser"></i> Clear Form
+      </button>
+      <button type="submit" class="btn btn-primary">
+        <i class="fas fa-paper-plane"></i> Submit Feedback
+      </button>
+    </div>
+
+  </form>
+</main>
+
+<!-- Thank You Modal -->
+<div class="modal-overlay" id="thankYouModal">
+  <div class="modal-box">
+    <div class="check-circle">✓</div>
+    <h2>Thank You!</h2>
+    <p>Your feedback has been successfully submitted.</p>
+    <p>We appreciate you taking the time to help us improve our services. Your input is valuable to us.</p>
+    <button class="btn btn-primary" id="closeModal">
+      <i class="fas fa-check"></i> Done
+    </button>
+  </div>
+</div>
+
+<footer>
+  &copy; 2024 <span>Oasis Doctors Plaza Homabay</span>. All rights reserved.
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  // Build matrix rows
+  const departments = ['Reception', 'Consultation', 'Pharmacy', 'Lab', 'Optical', 'Nutrition'];
+  const ratings = ['very-satisfied','satisfied','dissatisfied','very-dissatisfied'];
+  const matrixBody = document.getElementById('matrixBody');
+
+  departments.forEach(dep => {
+    const slug = dep.toLowerCase().replace(/\s+/g,'-');
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${dep}</td>` + ratings.map((r,i) => `
+      <td>
+        <input type="radio" name="${slug}" id="${slug}-${i}" value="${r}"/>
+        <label for="${slug}-${i}"></label>
+      </td>`).join('');
+    matrixBody.appendChild(tr);
+  });
+
+  // NPS grid
+  const npsGrid = document.getElementById('npsGrid');
+  for (let i = 0; i <= 10; i++) {
+    npsGrid.innerHTML += `<input type="radio" name="nps" id="nps${i}" value="${i}"/><label for="nps${i}">${i}</label>`;
+  }
+  document.querySelectorAll('input[name="nps"]').forEach(r => {
+    r.addEventListener('change', () => {
+      const v = parseInt(r.value);
+      const badge = document.getElementById('npsSelected');
+      badge.classList.remove('hidden','detractor','passive','promoter');
+      if (v <= 6) { badge.className = 'nps-badge detractor'; badge.textContent = '😟 Detractor (0–6) — We\'ll work harder for you'; }
+      else if (v <= 8) { badge.className = 'nps-badge passive'; badge.textContent = '😊 Passive (7–8) — Thank you, we aim to do better'; }
+      else { badge.className = 'nps-badge promoter'; badge.textContent = '🌟 Promoter (9–10) — Thank you for your trust!'; }
+    });
+  });
+
+  // Billing details toggle
+  document.querySelectorAll('input[name="billing"]').forEach(r => {
+    r.addEventListener('change', () => {
+      document.getElementById('billingDetails').classList.toggle('hidden', r.value !== 'no');
+    });
+  });
+
+  // Follow-up consent toggle
+  document.querySelectorAll('input[name="followUp"]').forEach(r => {
+    r.addEventListener('change', () => {
+      document.getElementById('followUpDetails').classList.toggle('hidden', r.value !== 'yes');
+    });
+  });
+
+  // Source other
+  document.querySelectorAll('input[name="source"]').forEach(r => {
+    r.addEventListener('change', () => {
+      document.getElementById('otherSourceGroup').classList.toggle('hidden', r.value !== 'other' || !r.checked);
+    });
+  });
+
+  // Professional service details
+  document.querySelectorAll('input[name="professionalService"]').forEach(r => {
+    r.addEventListener('change', () => {
+      document.getElementById('professionalServiceDetails').classList.toggle('hidden', r.value !== 'no');
+    });
+  });
+
+  // Slider
+  const slider = document.getElementById('responseSpeed');
+  const badge = document.getElementById('sliderBadge');
+  slider.addEventListener('input', () => { badge.textContent = slider.value + ' / 5'; });
+
+  // Progress bar
+  const fields = document.querySelectorAll('input, textarea');
+  function updateProgress() {
+    let filled = 0;
+    fields.forEach(f => {
+      if (f.type === 'radio' || f.type === 'checkbox') { if (f.checked) filled++; }
+      else if (f.value.trim()) filled++;
+    });
+    const pct = Math.min(100, Math.round((filled / Math.max(fields.length, 1)) * 100));
+    document.getElementById('progressBar').style.width = pct + '%';
+  }
+  fields.forEach(f => f.addEventListener('change', updateProgress));
+  fields.forEach(f => f.addEventListener('input', updateProgress));
+
+  // Submit — save to localStorage so admin panel can read it
+  // ── Supabase config ────────────────────────────────────────────────────────
+  // Replace these two values with your own project URL and anon key
+  const SUPABASE_URL  = 'https://dlofodvcecivesnqtkbx.supabase.co';   // e.g. https://xxxx.supabase.co
+  const SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRsb2ZvZHZjZWNpdmVzbnF0a2J4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MDEzMDEsImV4cCI6MjA4OTk3NzMwMX0.x4ZTQdA3-RQgJ4KZvkLqJ-tpMwzlUX0aJvLghzSFwxY';
+  // ───────────────────────────────────────────────────────────────────────────
+
+  document.getElementById('feedbackForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const btn  = document.querySelector('.btn-primary');
+    btn.disabled = true;
+    btn.textContent = 'Submitting…';
+
+    const form = document.getElementById('feedbackForm');
+    const fd   = new FormData(form);
+
+    const record = {
+      submitted_at: new Date().toISOString()
+    };
+
+    // scalar fields
+    ['email','phone','source','otherSource','responseSpeed','waitingTime',
+     'professionalService','professionalServiceText','unaddressedConcerns',
+     'serviceImprovements','appearance','dignity','billing','billingText',
+     'nps','followUp','contactMethod'].forEach(k => {
+       record[k] = fd.get(k) || null;
+     });
+
+    // checkboxes: deptVisited (stored as JSON array)
+    record.deptVisited = fd.getAll('deptVisited');
+
+    // department satisfaction matrix
+    ['reception','consultation','pharmacy','lab','optical','nutrition'].forEach(dep => {
+      record['dept_'+dep] = fd.get(dep) || null;
+    });
+
+    // Convert nps to integer if present
+    if (record.nps !== null && record.nps !== '') {
+      record.nps = parseInt(record.nps);
+    } else {
+      record.nps = null;
+    }
+
+    try {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/feedback`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify(record)
+      });
+
+      if (!res.ok) {
+        const err = await res.text();
+        throw new Error(err);
+      }
+
+      document.getElementById('thankYouModal').classList.add('active');
+      form.reset();
+      resetAllHidden();
+    } catch (err) {
+      console.error('Submission error:', err);
+      alert('Submission failed. Please check your connection and try again.\n\n' + err.message);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Submit Feedback';
+    }
+  });
+
+  function resetAllHidden() {
+    ['otherSourceGroup','professionalServiceDetails','billingDetails','followUpDetails'].forEach(id => {
+      document.getElementById(id).classList.add('hidden');
+    });
+    document.getElementById('npsSelected').classList.add('hidden');
+    document.getElementById('progressBar').style.width = '0%';
+    document.getElementById('sliderBadge').textContent = '3 / 5';
+  }
+
+  // Close modal
+  document.getElementById('closeModal').addEventListener('click', () => {
+    document.getElementById('thankYouModal').classList.remove('active');
+    document.getElementById('feedbackForm').reset();
+    resetAllHidden();
+  });
+
+  // Clear
+  document.getElementById('clearForm').addEventListener('click', () => {
+    if (confirm('Clear all fields?')) {
+      document.getElementById('feedbackForm').reset();
+      resetAllHidden();
+    }
+  });
+</script>
+</body>
+</html>
