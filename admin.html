@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Oasis Health – Admin Panel</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --teal:#0d7377;--teal-l:#14a085;--teal-pale:#e8f5f4;
+      --gold:#c9a84c;--dark:#111827;--mid:#4b5563;--light:#f3f6f8;
+      --white:#fff;--border:#d1e8e6;--red:#ef4444;--amber:#f59e0b;--green:#10b981;
+      --radius:14px;--shadow:0 2px 20px rgba(13,115,119,0.10);
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'DM Sans',sans-serif;background:var(--light);color:var(--dark);}
+
+    /* HEADER */
+    header{background:linear-gradient(135deg,var(--teal) 0%,#0a5a5e 100%);color:#fff;position:relative;overflow:hidden;}
+    header::before{content:'';position:absolute;top:-60px;right:-60px;width:220px;height:220px;background:rgba(255,255,255,0.05);border-radius:50%;}
+    .hdr-inner{max-width:1280px;margin:0 auto;padding:20px 28px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;position:relative;z-index:1;}
+    .hdr-logo{background:#fff;border-radius:10px;padding:6px 12px;box-shadow:0 4px 14px rgba(0,0,0,0.18);}
+    .hdr-logo img{height:56px;width:auto;display:block;}
+    .hdr-title{flex:1;}
+    .hdr-title h1{font-family:'DM Serif Display',serif;font-size:1.35rem;font-weight:400;color:#fff;}
+    .hdr-title p{font-size:0.8rem;opacity:.7;margin-top:2px;}
+    .hdr-actions{display:flex;gap:10px;flex-wrap:wrap;}
+    .btn{padding:9px 18px;border-radius:9px;font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:600;cursor:pointer;border:none;display:inline-flex;align-items:center;gap:7px;transition:all .2s;}
+    .btn-primary{background:linear-gradient(135deg,var(--teal),var(--teal-l));color:#fff;box-shadow:0 3px 12px rgba(13,115,119,.3);}
+    .btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(13,115,119,.4);}
+    .btn-ghost{background:rgba(255,255,255,.15);color:#fff;border:1.5px solid rgba(255,255,255,.3);}
+    .btn-ghost:hover{background:rgba(255,255,255,.25);}
+    .btn-amber{background:var(--amber);color:#fff;}
+    .btn-amber:hover{background:#d97706;}
+
+    /* LAYOUT */
+    main{max-width:1280px;margin:0 auto;padding:32px 24px 60px;}
+
+    /* SECTION TITLE */
+    .sec-title{display:flex;align-items:center;gap:10px;margin-bottom:20px;}
+    .sec-title .ico{width:34px;height:34px;background:var(--teal-pale);border-radius:9px;display:flex;align-items:center;justify-content:center;color:var(--teal);font-size:.85rem;}
+    .sec-title h2{font-family:'DM Serif Display',serif;font-size:1.2rem;font-weight:400;}
+
+    /* STAT CARDS */
+    .stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;margin-bottom:32px;}
+    .stat-card{background:var(--white);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);border:1px solid var(--border);display:flex;align-items:center;gap:14px;}
+    .stat-ico{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+    .stat-ico.teal{background:var(--teal-pale);color:var(--teal);}
+    .stat-ico.gold{background:#fef9c3;color:#ca8a04;}
+    .stat-ico.green{background:#d1fae5;color:#059669;}
+    .stat-ico.red{background:#fee2e2;color:#dc2626;}
+    .stat-ico.purple{background:#ede9fe;color:#7c3aed;}
+    .stat-ico.blue{background:#dbeafe;color:#2563eb;}
+    .stat-val{font-size:1.6rem;font-weight:700;line-height:1;color:var(--dark);}
+    .stat-lbl{font-size:0.75rem;color:var(--mid);margin-top:3px;font-weight:500;}
+
+    /* CHARTS */
+    .charts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:20px;margin-bottom:32px;}
+    .chart-card{background:var(--white);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);border:1px solid var(--border);}
+    .chart-card h3{font-size:0.9rem;font-weight:600;color:var(--mid);text-transform:uppercase;letter-spacing:.5px;margin-bottom:16px;}
+    .chart-card canvas{max-height:220px;}
+
+    /* NPS GAUGE */
+    .nps-summary{display:flex;gap:12px;margin-top:12px;flex-wrap:wrap;}
+    .nps-pill{flex:1;min-width:80px;padding:10px 12px;border-radius:10px;text-align:center;font-size:0.8rem;font-weight:600;}
+    .nps-pill.det{background:#fee2e2;color:#dc2626;}
+    .nps-pill.pas{background:#fef9c3;color:#ca8a04;}
+    .nps-pill.pro{background:#d1fae5;color:#059669;}
+    .nps-score{font-size:1.4rem;font-weight:700;display:block;}
+
+    /* DEPT VISIT HEATMAP */
+    .dept-bars{display:flex;flex-direction:column;gap:8px;margin-top:4px;}
+    .dept-bar-row{display:flex;align-items:center;gap:10px;font-size:0.82rem;}
+    .dept-bar-label{width:100px;flex-shrink:0;color:var(--mid);font-weight:500;}
+    .dept-bar-track{flex:1;height:10px;background:var(--teal-pale);border-radius:5px;overflow:hidden;}
+    .dept-bar-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--teal-l));border-radius:5px;transition:width .6s ease;}
+    .dept-bar-count{width:30px;text-align:right;font-weight:600;color:var(--dark);}
+
+    /* FILTERS */
+    .filter-bar{background:var(--white);border-radius:var(--radius);padding:16px 20px;box-shadow:var(--shadow);border:1px solid var(--border);display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:16px;}
+    .filter-bar select,.filter-bar input[type=date],.filter-bar input[type=text]{padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.85rem;color:var(--dark);background:var(--light);outline:none;cursor:pointer;}
+    .filter-bar select:focus,.filter-bar input:focus{border-color:var(--teal);}
+    .filter-bar label{font-size:0.8rem;color:var(--mid);font-weight:600;}
+
+    /* TABLE */
+    .table-wrap{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--border);overflow:hidden;}
+    table{width:100%;border-collapse:collapse;font-size:0.85rem;}
+    thead th{padding:12px 16px;text-align:left;font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--teal);background:var(--teal-pale);white-space:nowrap;}
+    tbody td{padding:13px 16px;border-bottom:1px solid #f0f4f4;vertical-align:middle;}
+    tbody tr:last-child td{border-bottom:none;}
+    tbody tr:hover td{background:#f8fdfb;cursor:pointer;}
+    .badge{display:inline-block;padding:3px 10px;border-radius:50px;font-size:0.73rem;font-weight:600;}
+    .badge.green{background:#d1fae5;color:#059669;}
+    .badge.amber{background:#fef9c3;color:#b45309;}
+    .badge.red{background:#fee2e2;color:#dc2626;}
+    .badge.teal{background:var(--teal-pale);color:var(--teal);}
+    .badge.purple{background:#ede9fe;color:#7c3aed;}
+
+    /* PAGINATION */
+    .pagination{display:flex;align-items:center;justify-content:center;gap:12px;padding:16px;border-top:1px solid var(--border);}
+    .pagination button{padding:7px 16px;border-radius:8px;border:1.5px solid var(--border);background:white;font-family:'DM Sans',sans-serif;font-size:0.82rem;cursor:pointer;font-weight:500;color:var(--mid);}
+    .pagination button:hover{border-color:var(--teal);color:var(--teal);}
+    .pagination button:disabled{opacity:.4;cursor:not-allowed;}
+    .pagination span{font-size:0.82rem;color:var(--mid);}
+
+    /* MODAL */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+    .modal-overlay.active{display:flex;}
+    .modal-box{background:#fff;border-radius:20px;padding:32px;max-width:680px;width:95%;max-height:88vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2);animation:popIn .25s ease;}
+    @keyframes popIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+    .modal-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--border);}
+    .modal-hdr h2{font-family:'DM Serif Display',serif;font-size:1.3rem;font-weight:400;}
+    .close-btn{background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--mid);padding:4px 8px;border-radius:6px;}
+    .close-btn:hover{background:var(--teal-pale);color:var(--teal);}
+    .detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+    @media(max-width:500px){.detail-grid{grid-template-columns:1fr;}}
+    .detail-item{background:var(--light);border-radius:10px;padding:12px 14px;}
+    .detail-item .lbl{font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--mid);margin-bottom:4px;}
+    .detail-item .val{font-size:0.9rem;font-weight:500;color:var(--dark);}
+    .detail-full{grid-column:1/-1;}
+    .dept-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;}
+    .dept-chip{padding:3px 10px;background:var(--teal-pale);color:var(--teal);border-radius:50px;font-size:0.75rem;font-weight:600;}
+
+    /* EXPORT MODAL */
+    .export-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0;}
+    .export-opt{padding:14px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:all .18s;}
+    .export-opt:has(input:checked){border-color:var(--teal);background:var(--teal-pale);}
+    .export-opt input{margin-right:8px;}
+    .export-opt label{font-weight:500;cursor:pointer;}
+    .date-range-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:12px 0;}
+    .date-range-row input[type=date]{padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.85rem;outline:none;}
+    .date-range-row input:focus{border-color:var(--teal);}
+    .chk-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0;}
+    .chk-grid label{display:flex;align-items:center;gap:8px;font-size:0.85rem;cursor:pointer;}
+
+    /* EMPTY STATE */
+    .empty{text-align:center;padding:60px 20px;color:var(--mid);}
+    .empty i{font-size:3rem;opacity:.3;margin-bottom:12px;display:block;}
+    .empty p{font-size:0.9rem;}
+
+    /* TABS */
+    .tab-bar{display:flex;gap:4px;background:var(--white);border-radius:12px;padding:6px;box-shadow:var(--shadow);border:1px solid var(--border);margin-bottom:24px;width:fit-content;}
+    .tab-btn{padding:9px 20px;border-radius:9px;border:none;font-family:'DM Sans',sans-serif;font-size:0.88rem;font-weight:600;cursor:pointer;color:var(--mid);background:transparent;display:flex;align-items:center;gap:8px;transition:all .18s;}
+    .tab-btn.active{background:linear-gradient(135deg,var(--teal),var(--teal-l));color:#fff;box-shadow:0 3px 12px rgba(13,115,119,.3);}
+    .tab-btn.gold.active{background:linear-gradient(135deg,#c9a84c,#e8c56a);box-shadow:0 3px 12px rgba(201,168,76,.3);}
+    .tab-panel{display:none;} .tab-panel.active{display:block;}
+
+    /* RESPONSIVE */
+    @media(max-width:640px){
+      .charts-grid{grid-template-columns:1fr;}
+      .stats-grid{grid-template-columns:repeat(2,1fr);}
+      .hdr-inner{padding:16px;}
+      .tab-bar{flex-wrap:wrap;}
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="hdr-inner">
+    <div style="display:flex;align-items:center;gap:16px;">
+      <div class="hdr-logo">
+        <img id="headerLogo" alt="Oasis Health"/>
+      </div>
+      <div class="hdr-title">
+        <h1>Admin Panel</h1>
+        <p>Feedback Analytics Dashboard</p>
+      </div>
+    </div>
+    <div class="hdr-actions">
+      <span style="color:rgba(255,255,255,0.75);font-size:0.82rem;display:flex;align-items:center;gap:6px;"><i class="fas fa-user-circle"></i> <span id="adminUserName">Admin</span></span>
+      <button class="btn btn-ghost" id="refreshBtn"><i class="fas fa-sync-alt"></i> Refresh</button>
+      <button class="btn btn-amber" id="testDataBtn"><i class="fas fa-flask"></i> Add Test Data</button>
+      <button class="btn btn-primary" id="exportBtn"><i class="fas fa-download"></i> Export</button>
+      <button class="btn btn-ghost" onclick="logout()" style="border-color:rgba(255,100,100,0.5);"><i class="fas fa-right-from-bracket"></i> Logout</button>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- TAB NAVIGATION -->
+  <div class="tab-bar" style="margin-top:24px;">
+    <button class="tab-btn active" id="tabOutpatient" onclick="switchTab('outpatient')"><i class="fas fa-stethoscope"></i> Outpatient</button>
+    <button class="tab-btn gold" id="tabInpatient" onclick="switchTab('inpatient')"><i class="fas fa-bed"></i> Inpatient</button>
+  </div>
+
+  <!-- OUTPATIENT TAB -->
+  <div class="tab-panel active" id="panelOutpatient">
+
+  <!-- KPI STATS -->
+  <div class="sec-title" style="margin-top:8px;">
+    <div class="ico"><i class="fas fa-chart-bar"></i></div>
+    <h2>Overview</h2>
+    <span style="margin-left:auto;font-size:0.78rem;color:var(--mid);" id="lastUpdated"></span>
+  </div>
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-ico teal"><i class="fas fa-users"></i></div><div><div class="stat-val" id="kTotalResp">0</div><div class="stat-lbl">Total Responses</div></div></div>
+    <div class="stat-card"><div class="stat-ico gold"><i class="fas fa-star"></i></div><div><div class="stat-val" id="kAvgAppear">—</div><div class="stat-lbl">Avg Appearance Rating</div></div></div>
+    <div class="stat-card"><div class="stat-ico green"><i class="fas fa-thumbs-up"></i></div><div><div class="stat-val" id="kSatisfied">—</div><div class="stat-lbl">Professional Service: Yes</div></div></div>
+    <div class="stat-card"><div class="stat-ico blue"><i class="fas fa-chart-line"></i></div><div><div class="stat-val" id="kNPS">—</div><div class="stat-lbl">Avg NPS Score</div></div></div>
+    <div class="stat-card"><div class="stat-ico purple"><i class="fas fa-phone-alt"></i></div><div><div class="stat-val" id="kFollowUp">—</div><div class="stat-lbl">Requested Follow-up</div></div></div>
+    <div class="stat-card"><div class="stat-ico teal"><i class="fas fa-receipt"></i></div><div><div class="stat-val" id="kBillingClear">—</div><div class="stat-lbl">Billing Clear</div></div></div>
+  </div>
+
+  <!-- CHARTS ROW 1 -->
+  <div class="charts-grid">
+    <div class="chart-card">
+      <h3>How Patients Found Us</h3>
+      <canvas id="chartSource"></canvas>
+    </div>
+    <div class="chart-card">
+      <h3>Waiting Time Perception</h3>
+      <canvas id="chartWaiting"></canvas>
+    </div>
+    <div class="chart-card">
+      <h3>Dignity & Respect</h3>
+      <canvas id="chartDignity"></canvas>
+    </div>
+    <div class="chart-card">
+      <h3>Billing Transparency</h3>
+      <canvas id="chartBilling"></canvas>
+    </div>
+  </div>
+
+  <!-- CHARTS ROW 2 -->
+  <div class="charts-grid" style="grid-template-columns:repeat(auto-fill,minmax(400px,1fr));">
+    <div class="chart-card">
+      <h3>NPS Distribution</h3>
+      <canvas id="chartNPS"></canvas>
+      <div class="nps-summary" id="npsSummary"></div>
+    </div>
+    <div class="chart-card">
+      <h3>Department Satisfaction (Avg Score)</h3>
+      <canvas id="chartDeptSat"></canvas>
+    </div>
+  </div>
+
+  <!-- DEPT VISIT FREQUENCY -->
+  <div class="chart-card" style="margin-bottom:24px;">
+    <h3>Department Visit Frequency</h3>
+    <div class="dept-bars" id="deptFreqBars"></div>
+  </div>
+
+  <!-- FEEDBACK TABLE -->
+  <div class="sec-title">
+    <div class="ico"><i class="fas fa-list"></i></div>
+    <h2>All Feedback Submissions</h2>
+  </div>
+
+  <div class="filter-bar">
+    <label>Filter:</label>
+    <select id="fSource">
+      <option value="">All Sources</option>
+      <option value="social-media">Social Media</option>
+      <option value="friend-family">Friend/Family</option>
+      <option value="referral">Referral</option>
+      <option value="signage">Signage</option>
+      <option value="other">Other</option>
+    </select>
+    <select id="fWaiting">
+      <option value="">All Wait Times</option>
+      <option value="not-long">Not Long</option>
+      <option value="average">Average</option>
+      <option value="long">Long</option>
+      <option value="very-long">Very Long</option>
+    </select>
+    <select id="fFollowUp">
+      <option value="">All Follow-up</option>
+      <option value="yes">Requested</option>
+      <option value="no">Anonymous</option>
+    </select>
+    <select id="fNPS">
+      <option value="">All NPS</option>
+      <option value="promoter">Promoters (9–10)</option>
+      <option value="passive">Passives (7–8)</option>
+      <option value="detractor">Detractors (0–6)</option>
+    </select>
+    <input type="date" id="fDate" title="Filter by date"/>
+    <button class="btn btn-ghost" id="clearFilters" style="background:white;color:var(--mid);border:1.5px solid var(--border);">
+      <i class="fas fa-times"></i> Clear
+    </button>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Date</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Source</th>
+          <th>Departments</th>
+          <th>Appearance</th>
+          <th>Resp. Speed</th>
+          <th>Waiting</th>
+          <th>Professional</th>
+          <th>Dignity</th>
+          <th>Billing</th>
+          <th>NPS</th>
+          <th>Follow-up</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="feedbackTbody"></tbody>
+    </table>
+    <div id="emptyState" class="empty hidden">
+      <i class="fas fa-inbox"></i>
+      <p>No feedback submissions yet.<br/>Submit a form or add test data to get started.</p>
+    </div>
+    <div class="pagination">
+      <button id="prevPage" disabled><i class="fas fa-chevron-left"></i> Prev</button>
+      <span id="pageInfo">Page 1 of 1</span>
+      <button id="nextPage" disabled>Next <i class="fas fa-chevron-right"></i></button>
+    </div>
+  </div>
+
+  </div><!-- end #panelOutpatient -->
+
+  <!-- INPATIENT TAB -->
+  <div class="tab-panel" id="panelInpatient">
+
+    <!-- INPATIENT KPI STATS -->
+    <div class="sec-title" style="margin-top:8px;">
+      <div class="ico" style="background:#fef9e7;color:#c9a84c;"><i class="fas fa-bed"></i></div>
+      <h2>Inpatient Overview</h2>
+      <span style="margin-left:auto;font-size:0.78rem;color:var(--mid);" id="ipLastUpdated"></span>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-ico teal"><i class="fas fa-procedures"></i></div><div><div class="stat-val" id="ipTotal">0</div><div class="stat-lbl">Total Submissions</div></div></div>
+      <div class="stat-card"><div class="stat-ico gold"><i class="fas fa-star"></i></div><div><div class="stat-val" id="ipAvgRating">—</div><div class="stat-lbl">Avg Overall Rating</div></div></div>
+      <div class="stat-card"><div class="stat-ico green"><i class="fas fa-heartbeat"></i></div><div><div class="stat-val" id="ipNursingGood">—</div><div class="stat-lbl">Nursing: Good/Excellent</div></div></div>
+      <div class="stat-card"><div class="stat-ico blue"><i class="fas fa-user-md"></i></div><div><div class="stat-val" id="ipDoctorGood">—</div><div class="stat-lbl">Doctor: Good/Excellent</div></div></div>
+      <div class="stat-card"><div class="stat-ico purple"><i class="fas fa-chart-line"></i></div><div><div class="stat-val" id="ipAvgNPS">—</div><div class="stat-lbl">Avg NPS Score</div></div></div>
+      <div class="stat-card"><div class="stat-ico teal"><i class="fas fa-receipt"></i></div><div><div class="stat-val" id="ipBillingClear">—</div><div class="stat-lbl">Billing Clear</div></div></div>
+    </div>
+
+    <!-- INPATIENT CHARTS ROW 1 -->
+    <div class="charts-grid">
+      <div class="chart-card"><h3>Doctor Service Ratings</h3><canvas id="ipChartDoctor"></canvas></div>
+      <div class="chart-card"><h3>Nursing Care Ratings</h3><canvas id="ipChartNursing"></canvas></div>
+      <div class="chart-card"><h3>Dignity & Respect</h3><canvas id="ipChartDignity"></canvas></div>
+      <div class="chart-card"><h3>Meals Experience</h3><canvas id="ipChartMeals"></canvas></div>
+    </div>
+
+    <!-- INPATIENT CHARTS ROW 2 -->
+    <div class="charts-grid" style="grid-template-columns:repeat(auto-fill,minmax(400px,1fr));">
+      <div class="chart-card">
+        <h3>NPS Distribution</h3>
+        <canvas id="ipChartNPS"></canvas>
+        <div class="nps-summary" id="ipNpsSummary"></div>
+      </div>
+      <div class="chart-card"><h3>Discharge Process</h3><canvas id="ipChartDischarge"></canvas></div>
+    </div>
+
+    <!-- INPATIENT WARD BREAKDOWN -->
+    <div class="chart-card" style="margin-bottom:24px;">
+      <h3>Submissions by Ward</h3>
+      <div class="dept-bars" id="ipWardBars"></div>
+    </div>
+
+    <!-- INPATIENT TABLE -->
+    <div class="sec-title">
+      <div class="ico" style="background:#fef9e7;color:#c9a84c;"><i class="fas fa-list"></i></div>
+      <h2>Inpatient Feedback Submissions</h2>
+    </div>
+
+    <div class="filter-bar">
+      <label>Filter:</label>
+      <select id="ipfWard">
+        <option value="">All Wards</option>
+        <option value="general-ward">General Ward</option>
+        <option value="maternity">Maternity</option>
+        <option value="paediatric">Paediatric</option>
+        <option value="private-room">Private Room</option>
+        <option value="hdu">HDU</option>
+        <option value="post-op">Post-Op</option>
+        <option value="other">Other</option>
+      </select>
+      <select id="ipfDoctor">
+        <option value="">All Doctor Ratings</option>
+        <option value="excellent">Excellent</option>
+        <option value="good">Good</option>
+        <option value="fair">Fair</option>
+        <option value="poor">Poor</option>
+      </select>
+      <select id="ipfFollowUp">
+        <option value="">All Follow-up</option>
+        <option value="yes">Requested</option>
+        <option value="no">Anonymous</option>
+      </select>
+      <select id="ipfNPS">
+        <option value="">All NPS</option>
+        <option value="promoter">Promoters (9–10)</option>
+        <option value="passive">Passives (7–8)</option>
+        <option value="detractor">Detractors (0–6)</option>
+      </select>
+      <input type="date" id="ipfDate" title="Filter by date"/>
+      <button class="btn btn-ghost" id="ipClearFilters" style="background:white;color:var(--mid);border:1.5px solid var(--border);"><i class="fas fa-times"></i> Clear</button>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th><th>Date</th><th>Name</th><th>Ward</th>
+            <th>Doctor</th><th>Nursing</th><th>Meals</th>
+            <th>Cleanliness</th><th>Discharge</th><th>Overall</th>
+            <th>NPS</th><th>Follow-up</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="ipFeedbackTbody"></tbody>
+      </table>
+      <div id="ipEmptyState" class="empty hidden">
+        <i class="fas fa-inbox"></i>
+        <p>No inpatient feedback yet. Submit an inpatient form to get started.</p>
+      </div>
+      <div class="pagination">
+        <button id="ipPrevPage" disabled><i class="fas fa-chevron-left"></i> Prev</button>
+        <span id="ipPageInfo">Page 1 of 1</span>
+        <button id="ipNextPage" disabled>Next <i class="fas fa-chevron-right"></i></button>
+      </div>
+    </div>
+
+  </div><!-- end #panelInpatient -->
+
+</main>
+
+<!-- INPATIENT DETAIL MODAL -->
+<div class="modal-overlay" id="ipDetailModal">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <h2>Inpatient Feedback Details</h2>
+      <button class="close-btn" id="ipCloseDetail"><i class="fas fa-times"></i></button>
+    </div>
+    <div id="ipDetailBody"></div>
+  </div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="modal-overlay" id="detailModal">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <h2>Feedback Details</h2>
+      <button class="close-btn" id="closeDetail"><i class="fas fa-times"></i></button>
+    </div>
+    <div id="detailBody"></div>
+  </div>
+</div>
+
+<!-- EXPORT MODAL -->
+<div class="modal-overlay" id="exportModal">
+  <div class="modal-box" style="max-width:500px;">
+    <div class="modal-hdr">
+      <h2>Export Feedback Data</h2>
+      <button class="close-btn" id="closeExport"><i class="fas fa-times"></i></button>
+    </div>
+    <p style="font-size:0.85rem;color:var(--mid);margin-bottom:12px;">Choose format and date range:</p>
+    <div class="export-grid">
+      <div class="export-opt"><input type="radio" name="expFmt" id="fmtCSV" value="csv" checked/><label for="fmtCSV">📊 CSV (Excel)</label></div>
+      <div class="export-opt"><input type="radio" name="expFmt" id="fmtJSON" value="json"/><label for="fmtJSON">🗂 JSON</label></div>
+    </div>
+    <div class="date-range-row">
+      <span style="font-size:0.82rem;color:var(--mid);font-weight:600;">From</span>
+      <input type="date" id="expFrom"/>
+      <span style="font-size:0.82rem;color:var(--mid);font-weight:600;">To</span>
+      <input type="date" id="expTo"/>
+    </div>
+    <p style="font-size:0.8rem;color:var(--mid);margin:10px 0 6px;font-weight:600;">Include fields:</p>
+    <div class="chk-grid">
+      <label><input type="checkbox" id="incContact" checked/> Contact Info</label>
+      <label><input type="checkbox" id="incRatings" checked/> Ratings</label>
+      <label><input type="checkbox" id="incDepts" checked/> Departments</label>
+      <label><input type="checkbox" id="incFeedback" checked/> Feedback Text</label>
+      <label><input type="checkbox" id="incBilling" checked/> Billing & Dignity</label>
+      <label><input type="checkbox" id="incNPS" checked/> NPS & Follow-up</label>
+    </div>
+    <div style="margin-top:20px;display:flex;justify-content:flex-end;gap:10px;">
+      <button class="btn" style="background:white;border:1.5px solid var(--border);color:var(--mid);" id="cancelExport">Cancel</button>
+      <button class="btn btn-primary" id="confirmExport"><i class="fas fa-download"></i> Export</button>
+    </div>
+  </div>
+</div>
+
+<footer style="text-align:center;padding:20px;font-size:0.78rem;color:#9ca3af;border-top:1px solid var(--border);">
+  &copy; 2024 <span style="color:var(--teal);font-weight:600;">Oasis Health Doctors Plaza</span> — Admin Panel
+</footer>
+
+<script>
+// ─── LOGO (embedded from feedback form) ──────────────────────────
+const LOGO_B64 = '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';
+document.getElementById('headerLogo').src = 'data:image/png;base64,' + LOGO_B64;
+
+// ─── SUPABASE CONFIG ─────────────────────────────────────────────
+// Replace these two values with your own project URL and anon key
+const SUPABASE_URL = 'https://dlofodvcecivesnqtkbx.supabase.co';   // e.g. https://xxxx.supabase.co
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRsb2ZvZHZjZWNpdmVzbnF0a2J4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MDEzMDEsImV4cCI6MjA4OTk3NzMwMX0.x4ZTQdA3-RQgJ4KZvkLqJ-tpMwzlUX0aJvLghzSFwxY';
+
+// ─── STATE ───────────────────────────────────────────────────────
+let allData = [];
+let filtered = [];
+let page = 1;
+const PER_PAGE = 15;
+let charts = {};
+
+// Inpatient state
+let ipAllData = [];
+let ipFiltered = [];
+let ipPage = 1;
+
+// ─── LOAD FROM SUPABASE ──────────────────────────────────────────
+async function loadAll() {
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/feedback?order=submitted_at.desc`,
+      {
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`
+        }
+      }
+    );
+    if (!res.ok) throw new Error(await res.text());
+    const rows = await res.json();
+    // Normalise column names so the rest of the dashboard JS works unchanged
+    return rows.map(r => ({
+      ...r,
+      id: r.id,
+      submittedAt: r.submitted_at ? r.submitted_at.slice(0,10) : ''
+    }));
+  } catch (err) {
+    console.error('Failed to load data:', err);
+    return [];
+  }
+}
+
+// ─── REALTIME REFRESH (polling every 30 s) ───────────────────────
+async function refreshData() {
+  allData = await loadAll();
+  applyFilters();
+  renderStats();
+  renderCharts();
+}
+setInterval(refreshData, 30000);
+
+// ─── LOAD INPATIENT FROM SUPABASE ───────────────────────────────
+async function loadInpatient() {
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/inpatient_feedback?order=submitted_at.desc`,
+      { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }
+    );
+    if (!res.ok) throw new Error(await res.text());
+    const rows = await res.json();
+    return rows.map(r => ({ ...r, submittedAt: r.submitted_at ? r.submitted_at.slice(0,10) : '' }));
+  } catch (err) {
+    console.error('Failed to load inpatient data:', err);
+    return [];
+  }
+}
+
+// ─── TAB SWITCHER ───────────────────────────────────────────────
+function switchTab(tab) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+  document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+  if (tab === 'inpatient' && ipAllData.length === 0) { loadAndRenderInpatient(); }
+}
+
+async function loadAndRenderInpatient() {
+  document.getElementById('ipLastUpdated').textContent = 'Loading…';
+  ipAllData = await loadInpatient();
+  ipApplyFilters();
+  ipRenderStats();
+  ipRenderCharts();
+  document.getElementById('ipLastUpdated').textContent = 'Last updated: ' + new Date().toLocaleTimeString();
+}
+
+// ─── INIT ────────────────────────────────────────────────────────
+// ─── AUTH GUARD ──────────────────────────────────────────────────
+function checkAuth() {
+  const raw = localStorage.getItem('oasis_admin_session');
+  if (!raw) { window.location.href = 'login.html'; return false; }
+  try {
+    const s = JSON.parse(raw);
+    if (!s.access_token || s.expires_at < Date.now() / 1000) {
+      localStorage.removeItem('oasis_admin_session');
+      window.location.href = 'login.html';
+      return false;
+    }
+    if (s.user && s.user.user_metadata && s.user.user_metadata.full_name) {
+      const el = document.getElementById('adminUserName');
+      if (el) el.textContent = s.user.user_metadata.full_name;
+    }
+    return true;
+  } catch(e) {
+    localStorage.removeItem('oasis_admin_session');
+    window.location.href = 'login.html';
+    return false;
+  }
+}
+
+function logout() {
+  localStorage.removeItem('oasis_admin_session');
+  window.location.href = 'login.html';
+}
+
+async function init() {
+  if (!checkAuth()) return;
+  document.getElementById('lastUpdated').textContent = 'Loading…';
+  allData = await loadAll();
+  applyFilters();
+  renderStats();
+  renderCharts();
+  document.getElementById('lastUpdated').textContent = 'Last updated: ' + new Date().toLocaleTimeString();
+}
+
+// ─── FILTERS ─────────────────────────────────────────────────────
+function applyFilters() {
+  const src   = document.getElementById('fSource').value;
+  const wait  = document.getElementById('fWaiting').value;
+  const fu    = document.getElementById('fFollowUp').value;
+  const nps   = document.getElementById('fNPS').value;
+  const date  = document.getElementById('fDate').value;
+
+  filtered = allData.filter(r => {
+    if (src  && r.source !== src)  return false;
+    if (wait && r.waitingTime !== wait) return false;
+    if (fu   && r.followUp !== fu) return false;
+    if (date && !r.submittedAt?.startsWith(date)) return false;
+    if (nps) {
+      const n = parseInt(r.nps ?? -1);
+      if (nps === 'promoter'  && n < 9)  return false;
+      if (nps === 'passive'   && (n < 7 || n > 8)) return false;
+      if (nps === 'detractor' && n > 6)  return false;
+    }
+    return true;
+  });
+  page = 1;
+  renderTable();
+}
+
+// ─── STATS ───────────────────────────────────────────────────────
+function renderStats() {
+  const d = allData;
+  document.getElementById('kTotalResp').textContent = d.length;
+
+  const appears = d.filter(r => r.appearance).map(r => parseInt(r.appearance));
+  document.getElementById('kAvgAppear').textContent =
+    appears.length ? (appears.reduce((a,b)=>a+b,0)/appears.length).toFixed(1)+' / 5' : '—';
+
+  const profYes = d.filter(r => r.professionalService === 'yes').length;
+  document.getElementById('kSatisfied').textContent =
+    d.length ? Math.round(profYes/d.length*100)+'%' : '—';
+
+  const npsVals = d.filter(r => r.nps !== undefined && r.nps !== '').map(r => parseInt(r.nps));
+  document.getElementById('kNPS').textContent =
+    npsVals.length ? (npsVals.reduce((a,b)=>a+b,0)/npsVals.length).toFixed(1) : '—';
+
+  const fuYes = d.filter(r => r.followUp === 'yes').length;
+  document.getElementById('kFollowUp').textContent =
+    d.length ? fuYes + ' / ' + d.length : '—';
+
+  const billClear = d.filter(r => r.billing === 'yes').length;
+  document.getElementById('kBillingClear').textContent =
+    d.length ? Math.round(billClear/d.length*100)+'%' : '—';
+}
+
+// ─── CHARTS ──────────────────────────────────────────────────────
+const TEAL_PALETTE = ['#0d7377','#14a085','#1abc9c','#48cba8','#7ddfc3','#aaeedd'];
+const WARM_PALETTE = ['#c9a84c','#e67e22','#e74c3c','#9b59b6','#3498db','#2ecc71'];
+
+function mkChart(id, type, labels, datasets, opts={}) {
+  if (charts[id]) charts[id].destroy();
+  const ctx = document.getElementById(id).getContext('2d');
+  charts[id] = new Chart(ctx, {
+    type,
+    data: { labels, datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: { legend: { position: 'bottom', labels: { font: { size: 11, family:'DM Sans' }, padding: 12 } } },
+      ...opts
+    }
+  });
+}
+
+function renderCharts() {
+  const d = allData;
+
+  // SOURCE
+  const srcMap = {};
+  d.forEach(r => { if(r.source) srcMap[r.source] = (srcMap[r.source]||0)+1; });
+  mkChart('chartSource','doughnut',
+    Object.keys(srcMap).map(k=>k.replace(/-/g,' ')),
+    [{ data: Object.values(srcMap), backgroundColor: TEAL_PALETTE, borderWidth: 2, borderColor: '#fff' }]
+  );
+
+  // WAITING
+  const wMap = {'not-long':0,'average':0,'long':0,'very-long':0};
+  d.forEach(r => { if(r.waitingTime && wMap[r.waitingTime]!==undefined) wMap[r.waitingTime]++; });
+  mkChart('chartWaiting','bar',
+    ['Not Long','Average','Long','Very Long'],
+    [{ data: Object.values(wMap), backgroundColor: ['#10b981','#f59e0b','#f97316','#ef4444'], borderRadius: 6 }],
+    { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { font: { size: 10 } } }, x: { ticks: { font: { size: 10 } } } } }
+  );
+
+  // DIGNITY
+  const digMap = { always:0, mostly:0, sometimes:0, no:0 };
+  d.forEach(r => { if(r.dignity && digMap[r.dignity]!==undefined) digMap[r.dignity]++; });
+  mkChart('chartDignity','pie',
+    ['Always','Mostly','Sometimes','Not Really'],
+    [{ data: Object.values(digMap), backgroundColor: ['#10b981','#14a085','#f59e0b','#ef4444'], borderWidth: 2, borderColor: '#fff' }]
+  );
+
+  // BILLING
+  const billMap = { yes:0, partial:0, no:0 };
+  d.forEach(r => { if(r.billing && billMap[r.billing]!==undefined) billMap[r.billing]++; });
+  mkChart('chartBilling','doughnut',
+    ['Clear','Somewhat','Not Clear'],
+    [{ data: Object.values(billMap), backgroundColor: ['#10b981','#f59e0b','#ef4444'], borderWidth: 2, borderColor: '#fff' }]
+  );
+
+  // NPS DISTRIBUTION
+  const npsArr = Array(11).fill(0);
+  d.forEach(r => { if(r.nps !== undefined && r.nps !== '') npsArr[parseInt(r.nps)]++; });
+  const npsColors = npsArr.map((_,i) => i<=6?'#ef4444':i<=8?'#f59e0b':'#10b981');
+  mkChart('chartNPS','bar',
+    Array.from({length:11},(_,i)=>i.toString()),
+    [{ data: npsArr, backgroundColor: npsColors, borderRadius: 5 }],
+    { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { font: { size: 10 } } }, x: { ticks: { font: { size: 10 } } } } }
+  );
+
+  // NPS SUMMARY PILLS
+  const det = d.filter(r => parseInt(r.nps??-1) <= 6 && r.nps !== '').length;
+  const pas = d.filter(r => { const n=parseInt(r.nps??-1); return n>=7&&n<=8; }).length;
+  const pro = d.filter(r => parseInt(r.nps??-1) >= 9 && r.nps !== '').length;
+  const total = det+pas+pro;
+  document.getElementById('npsSummary').innerHTML = total ? `
+    <div class="nps-pill det"><span class="nps-score">${det}</span>Detractors</div>
+    <div class="nps-pill pas"><span class="nps-score">${pas}</span>Passives</div>
+    <div class="nps-pill pro"><span class="nps-score">${pro}</span>Promoters</div>
+  ` : '';
+
+  // DEPT SATISFACTION (avg score per dept)
+  const depts = ['reception','consultation','pharmacy','lab','optical','nutrition','orthopedic','physiotherapy','psychology','radiology'];
+  const scoreMap = { 'very-satisfied':4,'satisfied':3,'dissatisfied':2,'very-dissatisfied':1 };
+  const deptAvgs = depts.map(dep => {
+    const scores = d.map(r => scoreMap[r['dept_'+dep]]).filter(Boolean);
+    return scores.length ? +(scores.reduce((a,b)=>a+b,0)/scores.length).toFixed(2) : 0;
+  });
+  mkChart('chartDeptSat','bar',
+    depts.map(d=>d.charAt(0).toUpperCase()+d.slice(1)),
+    [{ data: deptAvgs, backgroundColor: TEAL_PALETTE, borderRadius: 6 }],
+    { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, max: 4, ticks: { font:{size:10}, callback: v=>['','Very Diss.','Diss.','Satisfied','Very Sat.'][v]||'' } }, x: { ticks:{font:{size:10}} } } }
+  );
+
+  // DEPT VISIT FREQUENCY
+  const freqEl = document.getElementById('deptFreqBars');
+  const deptLabels = { reception:'Reception', consultation:'Consultation', pharmacy:'Pharmacy', lab:'Lab', optical:'Optical', nutrition:'Nutrition', orthopedic:'Orthopedic', physiotherapy:'Physiotherapy', psychology:'Psychology', radiology:'Radiology' };
+  const freqs = depts.map(dep => ({
+    name: deptLabels[dep],
+    count: d.filter(r => Array.isArray(r.deptVisited) && r.deptVisited.includes(dep)).length
+  }));
+  const maxFreq = Math.max(...freqs.map(f=>f.count), 1);
+  freqEl.innerHTML = freqs.map(f => `
+    <div class="dept-bar-row">
+      <span class="dept-bar-label">${f.name}</span>
+      <div class="dept-bar-track"><div class="dept-bar-fill" style="width:${Math.round(f.count/maxFreq*100)}%"></div></div>
+      <span class="dept-bar-count">${f.count}</span>
+    </div>`).join('');
+}
+
+// ─── TABLE ───────────────────────────────────────────────────────
+function npsClass(n) {
+  if (n === '' || n === undefined) return '';
+  const v = parseInt(n);
+  if (v >= 9) return 'green'; if (v >= 7) return 'amber'; return 'red';
+}
+
+function waitBadge(w) {
+  const map = { 'not-long':'green','average':'teal','long':'amber','very-long':'red' };
+  return map[w] || '';
+}
+
+function renderTable() {
+  const tbody = document.getElementById('feedbackTbody');
+  const empty = document.getElementById('emptyState');
+  const total = filtered.length;
+  const pages = Math.max(1, Math.ceil(total / PER_PAGE));
+  if (page > pages) page = pages;
+
+  document.getElementById('pageInfo').textContent = `Page ${page} of ${pages} (${total} records)`;
+  document.getElementById('prevPage').disabled = page <= 1;
+  document.getElementById('nextPage').disabled = page >= pages;
+
+  const slice = filtered.slice((page-1)*PER_PAGE, page*PER_PAGE);
+
+  if (!slice.length) {
+    tbody.innerHTML = '';
+    empty.classList.remove('hidden');
+    return;
+  }
+  empty.classList.add('hidden');
+
+  tbody.innerHTML = slice.map((r, i) => {
+    const idx = (page-1)*PER_PAGE + i + 1;
+    const depts = Array.isArray(r.deptVisited) ? r.deptVisited.map(d=>d.charAt(0).toUpperCase()+d.slice(1)).join(', ') : '—';
+    const npsV  = r.nps !== undefined && r.nps !== '' ? r.nps : '—';
+    const date  = r.submittedAt ? new Date(r.submittedAt).toLocaleDateString('en-KE') : '—';
+    return `<tr onclick="openDetail(${allData.indexOf(r)})">
+      <td style="color:var(--mid);font-size:.78rem;">${idx}</td>
+      <td style="white-space:nowrap;">${date}</td>
+      <td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${r.email||'—'}</td>
+      <td style="white-space:nowrap;">${r.phone||'—'}</td>
+      <td><span class="badge teal">${(r.source||'—').replace(/-/g,' ')}</span></td>
+      <td style="font-size:.8rem;max-width:160px;">${depts}</td>
+      <td style="text-align:center;">${r.appearance ? '★'.repeat(parseInt(r.appearance)) : '—'}</td>
+      <td style="text-align:center;">${r.responseSpeed||'—'}/5</td>
+      <td><span class="badge ${waitBadge(r.waitingTime)}">${(r.waitingTime||'—').replace(/-/g,' ')}</span></td>
+      <td style="text-align:center;">${r.professionalService === 'yes' ? '<span class="badge green">Yes</span>' : r.professionalService === 'no' ? '<span class="badge red">No</span>' : '—'}</td>
+      <td style="text-align:center;"><span class="badge ${r.dignity==='always'?'green':r.dignity==='mostly'?'teal':r.dignity==='sometimes'?'amber':'red'}">${r.dignity||'—'}</span></td>
+      <td style="text-align:center;">${r.billing === 'yes' ? '<span class="badge green">Clear</span>' : r.billing === 'partial' ? '<span class="badge amber">Partial</span>' : r.billing === 'no' ? '<span class="badge red">Unclear</span>' : '—'}</td>
+      <td style="text-align:center;"><span class="badge ${npsClass(r.nps)}">${npsV}</span></td>
+      <td style="text-align:center;">${r.followUp === 'yes' ? '<span class="badge purple">📞 Yes</span>' : '<span class="badge" style="background:#f3f4f6;color:#6b7280;">Anonymous</span>'}</td>
+      <td><button class="btn" style="padding:5px 12px;background:var(--teal-pale);color:var(--teal);font-size:.78rem;" onclick="event.stopPropagation();openDetail(${allData.indexOf(r)})"><i class="fas fa-eye"></i></button></td>
+    </tr>`;
+  }).join('');
+}
+
+// ─── DETAIL MODAL ────────────────────────────────────────────────
+function openDetail(idx) {
+  const r = allData[idx];
+  if (!r) return;
+  const depts = Array.isArray(r.deptVisited) && r.deptVisited.length
+    ? r.deptVisited.map(d=>`<span class="dept-chip">${d}</span>`).join('') : '—';
+
+  const depRatings = ['reception','consultation','pharmacy','lab','optical','nutrition'].map(dep => {
+    const val = r['dept_'+dep];
+    return val ? `<div class="detail-item"><div class="lbl">${dep}</div><div class="val">${val.replace(/-/g,' ')}</div></div>` : '';
+  }).join('');
+
+  document.getElementById('detailBody').innerHTML = `
+    <div class="detail-grid">
+      <div class="detail-item"><div class="lbl">Date Submitted</div><div class="val">${r.submittedAt ? new Date(r.submittedAt).toLocaleString('en-KE') : '—'}</div></div>
+      <div class="detail-item"><div class="lbl">Email</div><div class="val">${r.email||'—'}</div></div>
+      <div class="detail-item"><div class="lbl">Phone</div><div class="val">${r.phone||'—'}</div></div>
+      <div class="detail-item"><div class="lbl">How They Found Us</div><div class="val">${(r.source||'—').replace(/-/g,' ')}${r.otherSource?' – '+r.otherSource:''}</div></div>
+      <div class="detail-item detail-full"><div class="lbl">Departments Visited</div><div class="val"><div class="dept-chips">${depts}</div></div></div>
+      <div class="detail-item"><div class="lbl">Appearance Rating</div><div class="val">${r.appearance ? r.appearance+'/5 — '+'★'.repeat(parseInt(r.appearance)) : '—'}</div></div>
+      <div class="detail-item"><div class="lbl">Staff Response Speed</div><div class="val">${r.responseSpeed||'—'} / 5</div></div>
+      <div class="detail-item"><div class="lbl">Waiting Time</div><div class="val">${(r.waitingTime||'—').replace(/-/g,' ')}</div></div>
+      <div class="detail-item"><div class="lbl">Professional Service</div><div class="val">${r.professionalService||'—'}</div></div>
+      ${r.professionalServiceText ? `<div class="detail-item detail-full"><div class="lbl">Service Details</div><div class="val">${r.professionalServiceText}</div></div>` : ''}
+      <div class="detail-item"><div class="lbl">Dignity & Respect</div><div class="val">${r.dignity||'—'}</div></div>
+      <div class="detail-item"><div class="lbl">Billing Clarity</div><div class="val">${(r.billing||'—').replace(/-/g,' ')}</div></div>
+      ${r.billingText ? `<div class="detail-item detail-full"><div class="lbl">Billing Issue</div><div class="val">${r.billingText}</div></div>` : ''}
+      <div class="detail-item"><div class="lbl">NPS Score</div><div class="val">${r.nps !== undefined && r.nps !== '' ? r.nps+' / 10' : '—'}</div></div>
+      <div class="detail-item"><div class="lbl">Follow-up Consent</div><div class="val">${r.followUp||'—'}${r.contactMethod?' via '+r.contactMethod:''}</div></div>
+      ${depRatings ? `<div class="detail-item detail-full" style="background:var(--teal-pale);"><div class="lbl" style="margin-bottom:10px;">Department Ratings</div><div class="detail-grid">${depRatings}</div></div>` : ''}
+      ${r.unaddressedConcerns ? `<div class="detail-item detail-full"><div class="lbl">Unaddressed Concerns</div><div class="val">${r.unaddressedConcerns}</div></div>` : ''}
+      ${r.serviceImprovements ? `<div class="detail-item detail-full"><div class="lbl">Suggestions</div><div class="val">${r.serviceImprovements}</div></div>` : ''}
+    </div>`;
+
+  document.getElementById('detailModal').classList.add('active');
+}
+
+// ─── EXPORT ──────────────────────────────────────────────────────
+function doExport() {
+  const fmt  = document.querySelector('input[name="expFmt"]:checked').value;
+  const from = document.getElementById('expFrom').value;
+  const to   = document.getElementById('expTo').value;
+  const incC = document.getElementById('incContact').checked;
+  const incR = document.getElementById('incRatings').checked;
+  const incD = document.getElementById('incDepts').checked;
+  const incF = document.getElementById('incFeedback').checked;
+  const incB = document.getElementById('incBilling').checked;
+  const incN = document.getElementById('incNPS').checked;
+
+  let data = allData.filter(r => {
+    if (from && r.submittedAt < from) return false;
+    if (to   && r.submittedAt > to+' 23:59') return false;
+    return true;
+  });
+
+  data = data.map(r => {
+    const row = { id: r.id, submittedAt: r.submittedAt };
+    if (incC) { row.email=r.email; row.phone=r.phone; }
+    if (incR) { row.source=r.source; row.appearance=r.appearance; row.responseSpeed=r.responseSpeed; row.waitingTime=r.waitingTime; row.professionalService=r.professionalService; row.professionalServiceText=r.professionalServiceText; }
+    if (incD) { row.deptVisited=(r.deptVisited||[]).join(';'); ['reception','consultation','pharmacy','lab','optical','nutrition'].forEach(d=>{ row['dept_'+d]=r['dept_'+d]||''; }); }
+    if (incF) { row.unaddressedConcerns=r.unaddressedConcerns; row.serviceImprovements=r.serviceImprovements; }
+    if (incB) { row.dignity=r.dignity; row.billing=r.billing; row.billingText=r.billingText; }
+    if (incN) { row.nps=r.nps; row.followUp=r.followUp; row.contactMethod=r.contactMethod; }
+    return row;
+  });
+
+  if (fmt === 'json') {
+    const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+    dlBlob(blob, 'oasis-feedback.json');
+  } else {
+    if (!data.length) { alert('No data to export.'); return; }
+    const keys = Object.keys(data[0]);
+    const csv = [keys.join(','), ...data.map(r => keys.map(k => JSON.stringify(r[k]??'')).join(','))].join('\n');
+    const blob = new Blob([csv], {type:'text/csv'});
+    dlBlob(blob, 'oasis-feedback.csv');
+  }
+  document.getElementById('exportModal').classList.remove('active');
+}
+
+function dlBlob(blob, name) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  a.click();
+}
+
+// ─── TEST DATA ───────────────────────────────────────────────────
+function addTestData() {
+  const sources = ['social-media','friend-family','referral','signage','other'];
+  const waits   = ['not-long','average','long','very-long'];
+  const digs    = ['always','mostly','sometimes','no'];
+  const bills   = ['yes','partial','no'];
+  const depts   = ['reception','consultation','pharmacy','lab','optical','nutrition'];
+  const satVals = ['very-satisfied','satisfied','dissatisfied','very-dissatisfied'];
+
+  for (let i = 0; i < 12; i++) {
+    const visited = depts.filter(()=>Math.random()>0.5);
+    const depRatings = {};
+    depts.forEach(d => { depRatings['dept_'+d] = satVals[Math.floor(Math.random()*satVals.length)]; });
+    const npsVal = Math.floor(Math.random()*11);
+    const daysAgo = Math.floor(Math.random()*30);
+    const dt = new Date(); dt.setDate(dt.getDate()-daysAgo);
+
+    allData.push({
+      id: Date.now()+i,
+      submittedAt: dt.toISOString().slice(0,10),
+      email: `patient${i+1}@example.com`,
+      phone: `+2547${Math.floor(10000000+Math.random()*89999999)}`,
+      source: sources[Math.floor(Math.random()*sources.length)],
+      deptVisited: visited.length ? visited : ['reception'],
+      appearance: String(Math.floor(Math.random()*5)+1),
+      responseSpeed: String(Math.floor(Math.random()*5)+1),
+      waitingTime: waits[Math.floor(Math.random()*waits.length)],
+      professionalService: Math.random()>.25 ? 'yes' : 'no',
+      dignity: digs[Math.floor(Math.random()*digs.length)],
+      billing: bills[Math.floor(Math.random()*bills.length)],
+      nps: String(npsVal),
+      followUp: Math.random()>.5 ? 'yes' : 'no',
+      contactMethod: ['phone','whatsapp','email'][Math.floor(Math.random()*3)],
+      unaddressedConcerns: Math.random()>.6 ? 'Queue was too long at reception.' : '',
+      serviceImprovements: Math.random()>.6 ? 'More seating in waiting area would help.' : '',
+      ...depRatings
+    });
+  }
+  init();
+}
+
+// ─── INPATIENT: FILTERS ──────────────────────────────────────────
+function ipApplyFilters() {
+  const ward   = document.getElementById('ipfWard').value;
+  const doctor = document.getElementById('ipfDoctor').value;
+  const fu     = document.getElementById('ipfFollowUp').value;
+  const nps    = document.getElementById('ipfNPS').value;
+  const date   = document.getElementById('ipfDate').value;
+
+  ipFiltered = ipAllData.filter(r => {
+    if (ward   && r.ward !== ward) return false;
+    if (doctor && r.doctor_service !== doctor) return false;
+    if (fu     && r.follow_up !== fu) return false;
+    if (date   && !r.submittedAt?.startsWith(date)) return false;
+    if (nps) {
+      const n = parseInt(r.nps ?? -1);
+      if (nps === 'promoter'  && n < 9)  return false;
+      if (nps === 'passive'   && (n < 7 || n > 8)) return false;
+      if (nps === 'detractor' && n > 6)  return false;
+    }
+    return true;
+  });
+  ipPage = 1;
+  ipRenderTable();
+}
+
+// ─── INPATIENT: STATS ────────────────────────────────────────────
+function ipRenderStats() {
+  const d = ipAllData;
+  document.getElementById('ipTotal').textContent = d.length;
+
+  const ratings = d.filter(r => r.overall_rating).map(r => parseInt(r.overall_rating));
+  document.getElementById('ipAvgRating').textContent =
+    ratings.length ? (ratings.reduce((a,b)=>a+b,0)/ratings.length).toFixed(1)+' / 5' : '—';
+
+  const nursingGood = d.filter(r => r.nursing_care === 'excellent' || r.nursing_care === 'good').length;
+  document.getElementById('ipNursingGood').textContent =
+    d.length ? Math.round(nursingGood/d.length*100)+'%' : '—';
+
+  const doctorGood = d.filter(r => r.doctor_service === 'excellent' || r.doctor_service === 'good').length;
+  document.getElementById('ipDoctorGood').textContent =
+    d.length ? Math.round(doctorGood/d.length*100)+'%' : '—';
+
+  const npsVals = d.filter(r => r.nps !== null && r.nps !== undefined).map(r => parseInt(r.nps));
+  document.getElementById('ipAvgNPS').textContent =
+    npsVals.length ? (npsVals.reduce((a,b)=>a+b,0)/npsVals.length).toFixed(1) : '—';
+
+  const billClear = d.filter(r => r.billing === 'yes').length;
+  document.getElementById('ipBillingClear').textContent =
+    d.length ? Math.round(billClear/d.length*100)+'%' : '—';
+}
+
+// ─── INPATIENT: CHARTS ───────────────────────────────────────────
+function ipRenderCharts() {
+  const d = ipAllData;
+  const ratingLabels = ['Excellent','Good','Fair','Poor'];
+  const ratingVals = v => ['excellent','good','fair','poor'].map(k => d.filter(r=>r[v]===k).length);
+  const ratingColors = ['#10b981','#14a085','#f59e0b','#ef4444'];
+
+  // Doctor
+  mkChart('ipChartDoctor','bar', ratingLabels,
+    [{ data: ratingVals('doctor_service'), backgroundColor: ratingColors, borderRadius:6 }],
+    { plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true,ticks:{font:{size:10}}},x:{ticks:{font:{size:10}}}} }
+  );
+
+  // Nursing
+  mkChart('ipChartNursing','bar', ratingLabels,
+    [{ data: ratingVals('nursing_care'), backgroundColor: ratingColors, borderRadius:6 }],
+    { plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true,ticks:{font:{size:10}}},x:{ticks:{font:{size:10}}}} }
+  );
+
+  // Dignity
+  const digMap = { always:0, mostly:0, sometimes:0, no:0 };
+  d.forEach(r => { if(r.dignity && digMap[r.dignity]!==undefined) digMap[r.dignity]++; });
+  mkChart('ipChartDignity','pie',['Always','Mostly','Sometimes','Not Really'],
+    [{ data:Object.values(digMap), backgroundColor:['#10b981','#14a085','#f59e0b','#ef4444'], borderWidth:2, borderColor:'#fff' }]
+  );
+
+  // Meals
+  mkChart('ipChartMeals','bar', ratingLabels,
+    [{ data: ['excellent','good','average','poor'].map(k=>d.filter(r=>r.meals===k).length), backgroundColor: ratingColors, borderRadius:6 }],
+    { plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true,ticks:{font:{size:10}}},x:{ticks:{font:{size:10}}}} }
+  );
+
+  // NPS
+  const npsArr = Array(11).fill(0);
+  d.forEach(r => { if(r.nps!==null && r.nps!==undefined) npsArr[parseInt(r.nps)]++; });
+  mkChart('ipChartNPS','bar',
+    Array.from({length:11},(_,i)=>i.toString()),
+    [{ data:npsArr, backgroundColor:npsArr.map((_,i)=>i<=6?'#ef4444':i<=8?'#f59e0b':'#10b981'), borderRadius:5 }],
+    { plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true,ticks:{font:{size:10}}},x:{ticks:{font:{size:10}}}} }
+  );
+  const det=d.filter(r=>r.nps!==null&&r.nps!==undefined&&parseInt(r.nps)<=6).length;
+  const pas=d.filter(r=>r.nps!==null&&r.nps!==undefined&&parseInt(r.nps)>=7&&parseInt(r.nps)<=8).length;
+  const pro=d.filter(r=>r.nps!==null&&r.nps!==undefined&&parseInt(r.nps)>=9).length;
+  const tot=det+pas+pro;
+  document.getElementById('ipNpsSummary').innerHTML = tot ? `
+    <div class="nps-pill det"><span class="nps-score">${det}</span>Detractors</div>
+    <div class="nps-pill pas"><span class="nps-score">${pas}</span>Passives</div>
+    <div class="nps-pill pro"><span class="nps-score">${pro}</span>Promoters</div>` : '';
+
+  // Discharge
+  const disMap = {'very-smooth':0,'smooth':0,'fair':0,'slow':0};
+  d.forEach(r => { if(r.discharge_process && disMap[r.discharge_process]!==undefined) disMap[r.discharge_process]++; });
+  mkChart('ipChartDischarge','doughnut',
+    ['Very Smooth','Smooth','Fair','Slow/Difficult'],
+    [{ data:Object.values(disMap), backgroundColor:['#10b981','#14a085','#f59e0b','#ef4444'], borderWidth:2, borderColor:'#fff' }]
+  );
+
+  // Ward bars
+  const wards = ['general-ward','maternity','paediatric','private-room','hdu','post-op','other'];
+  const wardLabels = {'general-ward':'General','maternity':'Maternity','paediatric':'Paediatric','private-room':'Private Rm','hdu':'HDU','post-op':'Post-Op','other':'Other'};
+  const wardCounts = wards.map(w=>({ name:wardLabels[w], count:d.filter(r=>r.ward===w).length }));
+  const maxW = Math.max(...wardCounts.map(w=>w.count),1);
+  document.getElementById('ipWardBars').innerHTML = wardCounts.map(w=>`
+    <div class="dept-bar-row">
+      <span class="dept-bar-label">${w.name}</span>
+      <div class="dept-bar-track"><div class="dept-bar-fill" style="width:${Math.round(w.count/maxW*100)}%"></div></div>
+      <span class="dept-bar-count">${w.count}</span>
+    </div>`).join('');
+}
+
+// ─── INPATIENT: TABLE ────────────────────────────────────────────
+function ipRenderTable() {
+  const tbody = document.getElementById('ipFeedbackTbody');
+  const empty = document.getElementById('ipEmptyState');
+  const total = ipFiltered.length;
+  const pages = Math.max(1, Math.ceil(total/PER_PAGE));
+  if (ipPage > pages) ipPage = pages;
+  document.getElementById('ipPageInfo').textContent = `Page ${ipPage} of ${pages} (${total} records)`;
+  document.getElementById('ipPrevPage').disabled = ipPage <= 1;
+  document.getElementById('ipNextPage').disabled = ipPage >= pages;
+  const slice = ipFiltered.slice((ipPage-1)*PER_PAGE, ipPage*PER_PAGE);
+  if (!slice.length) { tbody.innerHTML=''; empty.classList.remove('hidden'); return; }
+  empty.classList.add('hidden');
+
+  const ratingBadge = v => {
+    if (!v) return '—';
+    const cls = v==='excellent'?'green':v==='good'?'teal':v==='fair'?'amber':'red';
+    return `<span class="badge ${cls}">${v}</span>`;
+  };
+  tbody.innerHTML = slice.map((r,i) => {
+    const idx = (ipPage-1)*PER_PAGE+i+1;
+    const date = r.submittedAt ? new Date(r.submittedAt).toLocaleDateString('en-KE') : '—';
+    const ward = r.ward ? r.ward.replace(/-/g,' ') : '—';
+    const stars = r.overall_rating ? '★'.repeat(parseInt(r.overall_rating)) : '—';
+    const npsV  = r.nps !== null && r.nps !== undefined ? r.nps : '—';
+    return `<tr onclick="ipOpenDetail(${ipAllData.indexOf(r)})">
+      <td style="color:var(--mid);font-size:.78rem;">${idx}</td>
+      <td style="white-space:nowrap;">${date}</td>
+      <td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${r.patient_name||r.email||'—'}</td>
+      <td><span class="badge teal">${ward}</span></td>
+      <td>${ratingBadge(r.doctor_service)}</td>
+      <td>${ratingBadge(r.nursing_care)}</td>
+      <td>${ratingBadge(r.meals)}</td>
+      <td style="text-align:center;">${r.cleanliness ? r.cleanliness+'/5' : '—'}</td>
+      <td>${ratingBadge(r.discharge_process?.replace(/-/g,' '))}</td>
+      <td style="text-align:center;">${stars}</td>
+      <td style="text-align:center;"><span class="badge ${npsClass(r.nps)}">${npsV}</span></td>
+      <td style="text-align:center;">${r.follow_up==='yes'?'<span class="badge purple">📞 Yes</span>':'<span class="badge" style="background:#f3f4f6;color:#6b7280;">Anonymous</span>'}</td>
+      <td><button class="btn" style="padding:5px 12px;background:#fef9e7;color:#c9a84c;font-size:.78rem;" onclick="event.stopPropagation();ipOpenDetail(${ipAllData.indexOf(r)})"><i class="fas fa-eye"></i></button></td>
+    </tr>`;
+  }).join('');
+}
+
+// ─── INPATIENT: DETAIL MODAL ─────────────────────────────────────
+function ipOpenDetail(idx) {
+  const r = ipAllData[idx];
+  if (!r) return;
+  const fieldRow = (lbl, val) => val ? `<div class="detail-item"><div class="lbl">${lbl}</div><div class="val">${val}</div></div>` : '';
+  document.getElementById('ipDetailBody').innerHTML = `
+    <div class="detail-grid">
+      ${fieldRow('Date Submitted', r.submittedAt ? new Date(r.submittedAt).toLocaleString('en-KE') : null)}
+      ${fieldRow('Patient Name', r.patient_name)}
+      ${fieldRow('Email', r.email)}
+      ${fieldRow('Phone', r.phone)}
+      ${fieldRow('Ward', r.ward?.replace(/-/g,' '))}
+      ${fieldRow('Admission Date', r.admission_date)}
+      ${fieldRow('Discharge Date', r.discharge_date)}
+      ${fieldRow('Admission Experience', r.admission_experience)}
+      ${fieldRow('Admission Wait', r.admission_wait?.replace(/-/g,' '))}
+      ${fieldRow('Doctor Service', r.doctor_service)}
+      ${fieldRow('Doctor Explanation', r.doctor_explanation?.replace(/-/g,' '))}
+      ${fieldRow('Doctor Visit Freq', r.doctor_visit_freq?.replace(/-/g,' '))}
+      ${fieldRow('Nursing Care', r.nursing_care)}
+      ${fieldRow('Nurse Response', r.nurse_response)}
+      ${fieldRow('Pain Management', r.pain_management?.replace(/-/g,' '))}
+      ${fieldRow('Housekeeping', r.housekeeping)}
+      ${fieldRow('Cleanliness', r.cleanliness ? r.cleanliness+'/5' : null)}
+      ${fieldRow('Meals', r.meals)}
+      ${fieldRow('Meals On Time', r.meals_on_time?.replace(/-/g,' '))}
+      ${fieldRow('Dignity', r.dignity)}
+      ${fieldRow('Billing', r.billing)}
+      ${fieldRow('Billing Issue', r.billing_text)}
+      ${fieldRow('Discharge Process', r.discharge_process?.replace(/-/g,' '))}
+      ${fieldRow('Discharge Instructions', r.discharge_instructions?.replace(/-/g,' '))}
+      ${fieldRow('Overall Rating', r.overall_rating ? r.overall_rating+'/5' : null)}
+      ${fieldRow('NPS Score', r.nps !== null && r.nps !== undefined ? r.nps+'/10' : null)}
+      ${fieldRow('Follow-up', r.follow_up)}
+      ${r.what_went_well ? `<div class="detail-item detail-full"><div class="lbl">What Went Well</div><div class="val">${r.what_went_well}</div></div>` : ''}
+      ${r.improvements ? `<div class="detail-item detail-full"><div class="lbl">Improvements</div><div class="val">${r.improvements}</div></div>` : ''}
+      ${r.admission_comments ? `<div class="detail-item detail-full"><div class="lbl">Admission Comments</div><div class="val">${r.admission_comments}</div></div>` : ''}
+      ${r.housekeeping_comments ? `<div class="detail-item detail-full"><div class="lbl">Housekeeping Comments</div><div class="val">${r.housekeeping_comments}</div></div>` : ''}
+      ${r.meals_comments ? `<div class="detail-item detail-full"><div class="lbl">Meal Comments</div><div class="val">${r.meals_comments}</div></div>` : ''}
+    </div>`;
+  document.getElementById('ipDetailModal').classList.add('active');
+}
+
+// ─── INPATIENT: EXPORT ───────────────────────────────────────────
+function exportInpatientCSV() {
+  if (!ipAllData.length) { alert('No inpatient data to export.'); return; }
+  const keys = ['submitted_at','patient_name','email','phone','ward','admission_date','discharge_date',
+    'admission_experience','admission_wait','doctor_service','nursing_care','pain_management',
+    'housekeeping','cleanliness','meals','meals_on_time','dignity','billing',
+    'discharge_process','overall_rating','nps','follow_up','contact_method',
+    'what_went_well','improvements'];
+  const csv = [keys.join(','), ...ipAllData.map(r => keys.map(k => JSON.stringify(r[k]??'')).join(','))].join('\n');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'oasis-inpatient-feedback.csv'; a.click();
+}
+
+// ─── EVENTS ──────────────────────────────────────────────────────
+document.getElementById('refreshBtn').addEventListener('click', () => {
+  const activeTab = document.querySelector('.tab-btn.active')?.id;
+  if (activeTab === 'tabInpatient') { loadAndRenderInpatient(); }
+  else { init(); }
+});
+document.getElementById('testDataBtn').addEventListener('click', addTestData);
+document.getElementById('exportBtn').addEventListener('click', () => {
+  const activeTab = document.querySelector('.tab-btn.active')?.id;
+  if (activeTab === 'tabInpatient') { exportInpatientCSV(); }
+  else { document.getElementById('exportModal').classList.add('active'); }
+});
+document.getElementById('closeExport').addEventListener('click', () => document.getElementById('exportModal').classList.remove('active'));
+document.getElementById('cancelExport').addEventListener('click', () => document.getElementById('exportModal').classList.remove('active'));
+document.getElementById('confirmExport').addEventListener('click', doExport);
+document.getElementById('closeDetail').addEventListener('click', () => document.getElementById('detailModal').classList.remove('active'));
+document.getElementById('ipCloseDetail').addEventListener('click', () => document.getElementById('ipDetailModal').classList.remove('active'));
+
+['fSource','fWaiting','fFollowUp','fNPS','fDate'].forEach(id => {
+  document.getElementById(id).addEventListener('change', applyFilters);
+});
+document.getElementById('clearFilters').addEventListener('click', () => {
+  ['fSource','fWaiting','fFollowUp','fNPS'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('fDate').value = '';
+  applyFilters();
+});
+
+// Inpatient filter events
+['ipfWard','ipfDoctor','ipfFollowUp','ipfNPS','ipfDate'].forEach(id => {
+  document.getElementById(id).addEventListener('change', ipApplyFilters);
+});
+document.getElementById('ipClearFilters').addEventListener('click', () => {
+  ['ipfWard','ipfDoctor','ipfFollowUp','ipfNPS'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('ipfDate').value = '';
+  ipApplyFilters();
+});
+
+document.getElementById('prevPage').addEventListener('click', () => { page--; renderTable(); });
+document.getElementById('nextPage').addEventListener('click', () => { page++; renderTable(); });
+document.getElementById('ipPrevPage').addEventListener('click', () => { ipPage--; ipRenderTable(); });
+document.getElementById('ipNextPage').addEventListener('click', () => { ipPage++; ipRenderTable(); });
+
+// close modals on backdrop click
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m) m.classList.remove('active'); });
+});
+
+init();
+</script>
+</body>
+</html>
