@@ -711,8 +711,9 @@
 </div>
 
 <main>
+  <a href="index.html" style="display:inline-flex;align-items:center;gap:8px;font-size:0.85rem;color:var(--teal);font-weight:600;text-decoration:none;margin-bottom:20px;"><i class="fas fa-arrow-left"></i> Back to Feedback Selection</a>
   <div class="form-intro">
-    <h2>Customer Feedback Form</h2>
+    <h2>Outpatient Feedback Form</h2>
     <p>Estimated completion time: 2–3 minutes &nbsp;·&nbsp; Your response is confidential</p>
   </div>
 
@@ -774,6 +775,10 @@
         <label class="check-pill"><input type="checkbox" name="deptVisited" value="lab"/> 🧪 Lab</label>
         <label class="check-pill"><input type="checkbox" name="deptVisited" value="optical"/> 👓 Optical</label>
         <label class="check-pill"><input type="checkbox" name="deptVisited" value="nutrition"/> 🥗 Nutrition</label>
+        <label class="check-pill"><input type="checkbox" name="deptVisited" value="orthopedic"/> 🦴 Orthopedic</label>
+        <label class="check-pill"><input type="checkbox" name="deptVisited" value="physiotherapy"/> 🏃 Physiotherapy</label>
+        <label class="check-pill"><input type="checkbox" name="deptVisited" value="psychology"/> 🧠 Psychology</label>
+        <label class="check-pill"><input type="checkbox" name="deptVisited" value="radiology"/> 🔬 Radiology</label>
       </div>
     </div>
 
@@ -996,7 +1001,7 @@
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
   // Build matrix rows
-  const departments = ['Reception', 'Consultation', 'Pharmacy', 'Lab', 'Optical', 'Nutrition'];
+  const departments = ['Reception', 'Consultation', 'Pharmacy', 'Lab', 'Optical', 'Nutrition', 'Orthopedic', 'Physiotherapy', 'Psychology', 'Radiology'];
   const ratings = ['very-satisfied','satisfied','dissatisfied','very-dissatisfied'];
   const matrixBody = document.getElementById('matrixBody');
 
@@ -1106,7 +1111,7 @@
     record.deptVisited = fd.getAll('deptVisited');
 
     // department satisfaction matrix
-    ['reception','consultation','pharmacy','lab','optical','nutrition'].forEach(dep => {
+    ['reception','consultation','pharmacy','lab','optical','nutrition','orthopedic','physiotherapy','psychology','radiology'].forEach(dep => {
       record['dept_'+dep] = fd.get(dep) || null;
     });
 
