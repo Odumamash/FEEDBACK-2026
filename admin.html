@@ -140,11 +140,19 @@
     .empty i{font-size:3rem;opacity:.3;margin-bottom:12px;display:block;}
     .empty p{font-size:0.9rem;}
 
+    /* TABS */
+    .tab-bar{display:flex;gap:4px;background:var(--white);border-radius:12px;padding:6px;box-shadow:var(--shadow);border:1px solid var(--border);margin-bottom:24px;width:fit-content;}
+    .tab-btn{padding:9px 20px;border-radius:9px;border:none;font-family:'DM Sans',sans-serif;font-size:0.88rem;font-weight:600;cursor:pointer;color:var(--mid);background:transparent;display:flex;align-items:center;gap:8px;transition:all .18s;}
+    .tab-btn.active{background:linear-gradient(135deg,var(--teal),var(--teal-l));color:#fff;box-shadow:0 3px 12px rgba(13,115,119,.3);}
+    .tab-btn.gold.active{background:linear-gradient(135deg,#c9a84c,#e8c56a);box-shadow:0 3px 12px rgba(201,168,76,.3);}
+    .tab-panel{display:none;} .tab-panel.active{display:block;}
+
     /* RESPONSIVE */
     @media(max-width:640px){
       .charts-grid{grid-template-columns:1fr;}
       .stats-grid{grid-template-columns:repeat(2,1fr);}
       .hdr-inner{padding:16px;}
+      .tab-bar{flex-wrap:wrap;}
     }
   </style>
 </head>
@@ -172,6 +180,15 @@
 </header>
 
 <main>
+
+  <!-- TAB NAVIGATION -->
+  <div class="tab-bar" style="margin-top:24px;">
+    <button class="tab-btn active" id="tabOutpatient" onclick="switchTab('outpatient')"><i class="fas fa-stethoscope"></i> Outpatient</button>
+    <button class="tab-btn gold" id="tabInpatient" onclick="switchTab('inpatient')"><i class="fas fa-bed"></i> Inpatient</button>
+  </div>
+
+  <!-- OUTPATIENT TAB -->
+  <div class="tab-panel active" id="panelOutpatient">
 
   <!-- KPI STATS -->
   <div class="sec-title" style="margin-top:8px;">
@@ -301,7 +318,127 @@
     </div>
   </div>
 
+  </div><!-- end #panelOutpatient -->
+
+  <!-- INPATIENT TAB -->
+  <div class="tab-panel" id="panelInpatient">
+
+    <!-- INPATIENT KPI STATS -->
+    <div class="sec-title" style="margin-top:8px;">
+      <div class="ico" style="background:#fef9e7;color:#c9a84c;"><i class="fas fa-bed"></i></div>
+      <h2>Inpatient Overview</h2>
+      <span style="margin-left:auto;font-size:0.78rem;color:var(--mid);" id="ipLastUpdated"></span>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-ico teal"><i class="fas fa-procedures"></i></div><div><div class="stat-val" id="ipTotal">0</div><div class="stat-lbl">Total Submissions</div></div></div>
+      <div class="stat-card"><div class="stat-ico gold"><i class="fas fa-star"></i></div><div><div class="stat-val" id="ipAvgRating">—</div><div class="stat-lbl">Avg Overall Rating</div></div></div>
+      <div class="stat-card"><div class="stat-ico green"><i class="fas fa-heartbeat"></i></div><div><div class="stat-val" id="ipNursingGood">—</div><div class="stat-lbl">Nursing: Good/Excellent</div></div></div>
+      <div class="stat-card"><div class="stat-ico blue"><i class="fas fa-user-md"></i></div><div><div class="stat-val" id="ipDoctorGood">—</div><div class="stat-lbl">Doctor: Good/Excellent</div></div></div>
+      <div class="stat-card"><div class="stat-ico purple"><i class="fas fa-chart-line"></i></div><div><div class="stat-val" id="ipAvgNPS">—</div><div class="stat-lbl">Avg NPS Score</div></div></div>
+      <div class="stat-card"><div class="stat-ico teal"><i class="fas fa-receipt"></i></div><div><div class="stat-val" id="ipBillingClear">—</div><div class="stat-lbl">Billing Clear</div></div></div>
+    </div>
+
+    <!-- INPATIENT CHARTS ROW 1 -->
+    <div class="charts-grid">
+      <div class="chart-card"><h3>Doctor Service Ratings</h3><canvas id="ipChartDoctor"></canvas></div>
+      <div class="chart-card"><h3>Nursing Care Ratings</h3><canvas id="ipChartNursing"></canvas></div>
+      <div class="chart-card"><h3>Dignity & Respect</h3><canvas id="ipChartDignity"></canvas></div>
+      <div class="chart-card"><h3>Meals Experience</h3><canvas id="ipChartMeals"></canvas></div>
+    </div>
+
+    <!-- INPATIENT CHARTS ROW 2 -->
+    <div class="charts-grid" style="grid-template-columns:repeat(auto-fill,minmax(400px,1fr));">
+      <div class="chart-card">
+        <h3>NPS Distribution</h3>
+        <canvas id="ipChartNPS"></canvas>
+        <div class="nps-summary" id="ipNpsSummary"></div>
+      </div>
+      <div class="chart-card"><h3>Discharge Process</h3><canvas id="ipChartDischarge"></canvas></div>
+    </div>
+
+    <!-- INPATIENT WARD BREAKDOWN -->
+    <div class="chart-card" style="margin-bottom:24px;">
+      <h3>Submissions by Ward</h3>
+      <div class="dept-bars" id="ipWardBars"></div>
+    </div>
+
+    <!-- INPATIENT TABLE -->
+    <div class="sec-title">
+      <div class="ico" style="background:#fef9e7;color:#c9a84c;"><i class="fas fa-list"></i></div>
+      <h2>Inpatient Feedback Submissions</h2>
+    </div>
+
+    <div class="filter-bar">
+      <label>Filter:</label>
+      <select id="ipfWard">
+        <option value="">All Wards</option>
+        <option value="general-ward">General Ward</option>
+        <option value="maternity">Maternity</option>
+        <option value="paediatric">Paediatric</option>
+        <option value="private-room">Private Room</option>
+        <option value="hdu">HDU</option>
+        <option value="post-op">Post-Op</option>
+        <option value="other">Other</option>
+      </select>
+      <select id="ipfDoctor">
+        <option value="">All Doctor Ratings</option>
+        <option value="excellent">Excellent</option>
+        <option value="good">Good</option>
+        <option value="fair">Fair</option>
+        <option value="poor">Poor</option>
+      </select>
+      <select id="ipfFollowUp">
+        <option value="">All Follow-up</option>
+        <option value="yes">Requested</option>
+        <option value="no">Anonymous</option>
+      </select>
+      <select id="ipfNPS">
+        <option value="">All NPS</option>
+        <option value="promoter">Promoters (9–10)</option>
+        <option value="passive">Passives (7–8)</option>
+        <option value="detractor">Detractors (0–6)</option>
+      </select>
+      <input type="date" id="ipfDate" title="Filter by date"/>
+      <button class="btn btn-ghost" id="ipClearFilters" style="background:white;color:var(--mid);border:1.5px solid var(--border);"><i class="fas fa-times"></i> Clear</button>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th><th>Date</th><th>Name</th><th>Ward</th>
+            <th>Doctor</th><th>Nursing</th><th>Meals</th>
+            <th>Cleanliness</th><th>Discharge</th><th>Overall</th>
+            <th>NPS</th><th>Follow-up</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="ipFeedbackTbody"></tbody>
+      </table>
+      <div id="ipEmptyState" class="empty hidden">
+        <i class="fas fa-inbox"></i>
+        <p>No inpatient feedback yet. Submit an inpatient form to get started.</p>
+      </div>
+      <div class="pagination">
+        <button id="ipPrevPage" disabled><i class="fas fa-chevron-left"></i> Prev</button>
+        <span id="ipPageInfo">Page 1 of 1</span>
+        <button id="ipNextPage" disabled>Next <i class="fas fa-chevron-right"></i></button>
+      </div>
+    </div>
+
+  </div><!-- end #panelInpatient -->
+
 </main>
+
+<!-- INPATIENT DETAIL MODAL -->
+<div class="modal-overlay" id="ipDetailModal">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <h2>Inpatient Feedback Details</h2>
+      <button class="close-btn" id="ipCloseDetail"><i class="fas fa-times"></i></button>
+    </div>
+    <div id="ipDetailBody"></div>
+  </div>
+</div>
 
 <!-- DETAIL MODAL -->
 <div class="modal-overlay" id="detailModal">
@@ -369,6 +506,11 @@ let page = 1;
 const PER_PAGE = 15;
 let charts = {};
 
+// Inpatient state
+let ipAllData = [];
+let ipFiltered = [];
+let ipPage = 1;
+
 // ─── LOAD FROM SUPABASE ──────────────────────────────────────────
 async function loadAll() {
   try {
@@ -403,6 +545,40 @@ async function refreshData() {
   renderCharts();
 }
 setInterval(refreshData, 30000);
+
+// ─── LOAD INPATIENT FROM SUPABASE ───────────────────────────────
+async function loadInpatient() {
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/inpatient_feedback?order=submitted_at.desc`,
+      { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }
+    );
+    if (!res.ok) throw new Error(await res.text());
+    const rows = await res.json();
+    return rows.map(r => ({ ...r, submittedAt: r.submitted_at ? r.submitted_at.slice(0,10) : '' }));
+  } catch (err) {
+    console.error('Failed to load inpatient data:', err);
+    return [];
+  }
+}
+
+// ─── TAB SWITCHER ───────────────────────────────────────────────
+function switchTab(tab) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+  document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+  if (tab === 'inpatient' && ipAllData.length === 0) { loadAndRenderInpatient(); }
+}
+
+async function loadAndRenderInpatient() {
+  document.getElementById('ipLastUpdated').textContent = 'Loading…';
+  ipAllData = await loadInpatient();
+  ipApplyFilters();
+  ipRenderStats();
+  ipRenderCharts();
+  document.getElementById('ipLastUpdated').textContent = 'Last updated: ' + new Date().toLocaleTimeString();
+}
 
 // ─── INIT ────────────────────────────────────────────────────────
 // ─── AUTH GUARD ──────────────────────────────────────────────────
@@ -571,7 +747,7 @@ function renderCharts() {
   ` : '';
 
   // DEPT SATISFACTION (avg score per dept)
-  const depts = ['reception','consultation','pharmacy','lab','optical','nutrition'];
+  const depts = ['reception','consultation','pharmacy','lab','optical','nutrition','orthopedic','physiotherapy','psychology','radiology'];
   const scoreMap = { 'very-satisfied':4,'satisfied':3,'dissatisfied':2,'very-dissatisfied':1 };
   const deptAvgs = depts.map(dep => {
     const scores = d.map(r => scoreMap[r['dept_'+dep]]).filter(Boolean);
@@ -585,7 +761,7 @@ function renderCharts() {
 
   // DEPT VISIT FREQUENCY
   const freqEl = document.getElementById('deptFreqBars');
-  const deptLabels = { reception:'Reception', consultation:'Consultation', pharmacy:'Pharmacy', lab:'Lab', optical:'Optical', nutrition:'Nutrition' };
+  const deptLabels = { reception:'Reception', consultation:'Consultation', pharmacy:'Pharmacy', lab:'Lab', optical:'Optical', nutrition:'Nutrition', orthopedic:'Orthopedic', physiotherapy:'Physiotherapy', psychology:'Psychology', radiology:'Radiology' };
   const freqs = depts.map(dep => ({
     name: deptLabels[dep],
     count: d.filter(r => Array.isArray(r.deptVisited) && r.deptVisited.includes(dep)).length
@@ -780,18 +956,247 @@ function addTestData() {
       ...depRatings
     });
   }
-  saveAll(allData);
   init();
 }
 
+// ─── INPATIENT: FILTERS ──────────────────────────────────────────
+function ipApplyFilters() {
+  const ward   = document.getElementById('ipfWard').value;
+  const doctor = document.getElementById('ipfDoctor').value;
+  const fu     = document.getElementById('ipfFollowUp').value;
+  const nps    = document.getElementById('ipfNPS').value;
+  const date   = document.getElementById('ipfDate').value;
+
+  ipFiltered = ipAllData.filter(r => {
+    if (ward   && r.ward !== ward) return false;
+    if (doctor && r.doctor_service !== doctor) return false;
+    if (fu     && r.follow_up !== fu) return false;
+    if (date   && !r.submittedAt?.startsWith(date)) return false;
+    if (nps) {
+      const n = parseInt(r.nps ?? -1);
+      if (nps === 'promoter'  && n < 9)  return false;
+      if (nps === 'passive'   && (n < 7 || n > 8)) return false;
+      if (nps === 'detractor' && n > 6)  return false;
+    }
+    return true;
+  });
+  ipPage = 1;
+  ipRenderTable();
+}
+
+// ─── INPATIENT: STATS ────────────────────────────────────────────
+function ipRenderStats() {
+  const d = ipAllData;
+  document.getElementById('ipTotal').textContent = d.length;
+
+  const ratings = d.filter(r => r.overall_rating).map(r => parseInt(r.overall_rating));
+  document.getElementById('ipAvgRating').textContent =
+    ratings.length ? (ratings.reduce((a,b)=>a+b,0)/ratings.length).toFixed(1)+' / 5' : '—';
+
+  const nursingGood = d.filter(r => r.nursing_care === 'excellent' || r.nursing_care === 'good').length;
+  document.getElementById('ipNursingGood').textContent =
+    d.length ? Math.round(nursingGood/d.length*100)+'%' : '—';
+
+  const doctorGood = d.filter(r => r.doctor_service === 'excellent' || r.doctor_service === 'good').length;
+  document.getElementById('ipDoctorGood').textContent =
+    d.length ? Math.round(doctorGood/d.length*100)+'%' : '—';
+
+  const npsVals = d.filter(r => r.nps !== null && r.nps !== undefined).map(r => parseInt(r.nps));
+  document.getElementById('ipAvgNPS').textContent =
+    npsVals.length ? (npsVals.reduce((a,b)=>a+b,0)/npsVals.length).toFixed(1) : '—';
+
+  const billClear = d.filter(r => r.billing === 'yes').length;
+  document.getElementById('ipBillingClear').textContent =
+    d.length ? Math.round(billClear/d.length*100)+'%' : '—';
+}
+
+// ─── INPATIENT: CHARTS ───────────────────────────────────────────
+function ipRenderCharts() {
+  const d = ipAllData;
+  const ratingLabels = ['Excellent','Good','Fair','Poor'];
+  const ratingVals = v => ['excellent','good','fair','poor'].map(k => d.filter(r=>r[v]===k).length);
+  const ratingColors = ['#10b981','#14a085','#f59e0b','#ef4444'];
+
+  // Doctor
+  mkChart('ipChartDoctor','bar', ratingLabels,
+    [{ data: ratingVals('doctor_service'), backgroundColor: ratingColors, borderRadius:6 }],
+    { plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true,ticks:{font:{size:10}}},x:{ticks:{font:{size:10}}}} }
+  );
+
+  // Nursing
+  mkChart('ipChartNursing','bar', ratingLabels,
+    [{ data: ratingVals('nursing_care'), backgroundColor: ratingColors, borderRadius:6 }],
+    { plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true,ticks:{font:{size:10}}},x:{ticks:{font:{size:10}}}} }
+  );
+
+  // Dignity
+  const digMap = { always:0, mostly:0, sometimes:0, no:0 };
+  d.forEach(r => { if(r.dignity && digMap[r.dignity]!==undefined) digMap[r.dignity]++; });
+  mkChart('ipChartDignity','pie',['Always','Mostly','Sometimes','Not Really'],
+    [{ data:Object.values(digMap), backgroundColor:['#10b981','#14a085','#f59e0b','#ef4444'], borderWidth:2, borderColor:'#fff' }]
+  );
+
+  // Meals
+  mkChart('ipChartMeals','bar', ratingLabels,
+    [{ data: ['excellent','good','average','poor'].map(k=>d.filter(r=>r.meals===k).length), backgroundColor: ratingColors, borderRadius:6 }],
+    { plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true,ticks:{font:{size:10}}},x:{ticks:{font:{size:10}}}} }
+  );
+
+  // NPS
+  const npsArr = Array(11).fill(0);
+  d.forEach(r => { if(r.nps!==null && r.nps!==undefined) npsArr[parseInt(r.nps)]++; });
+  mkChart('ipChartNPS','bar',
+    Array.from({length:11},(_,i)=>i.toString()),
+    [{ data:npsArr, backgroundColor:npsArr.map((_,i)=>i<=6?'#ef4444':i<=8?'#f59e0b':'#10b981'), borderRadius:5 }],
+    { plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true,ticks:{font:{size:10}}},x:{ticks:{font:{size:10}}}} }
+  );
+  const det=d.filter(r=>r.nps!==null&&r.nps!==undefined&&parseInt(r.nps)<=6).length;
+  const pas=d.filter(r=>r.nps!==null&&r.nps!==undefined&&parseInt(r.nps)>=7&&parseInt(r.nps)<=8).length;
+  const pro=d.filter(r=>r.nps!==null&&r.nps!==undefined&&parseInt(r.nps)>=9).length;
+  const tot=det+pas+pro;
+  document.getElementById('ipNpsSummary').innerHTML = tot ? `
+    <div class="nps-pill det"><span class="nps-score">${det}</span>Detractors</div>
+    <div class="nps-pill pas"><span class="nps-score">${pas}</span>Passives</div>
+    <div class="nps-pill pro"><span class="nps-score">${pro}</span>Promoters</div>` : '';
+
+  // Discharge
+  const disMap = {'very-smooth':0,'smooth':0,'fair':0,'slow':0};
+  d.forEach(r => { if(r.discharge_process && disMap[r.discharge_process]!==undefined) disMap[r.discharge_process]++; });
+  mkChart('ipChartDischarge','doughnut',
+    ['Very Smooth','Smooth','Fair','Slow/Difficult'],
+    [{ data:Object.values(disMap), backgroundColor:['#10b981','#14a085','#f59e0b','#ef4444'], borderWidth:2, borderColor:'#fff' }]
+  );
+
+  // Ward bars
+  const wards = ['general-ward','maternity','paediatric','private-room','hdu','post-op','other'];
+  const wardLabels = {'general-ward':'General','maternity':'Maternity','paediatric':'Paediatric','private-room':'Private Rm','hdu':'HDU','post-op':'Post-Op','other':'Other'};
+  const wardCounts = wards.map(w=>({ name:wardLabels[w], count:d.filter(r=>r.ward===w).length }));
+  const maxW = Math.max(...wardCounts.map(w=>w.count),1);
+  document.getElementById('ipWardBars').innerHTML = wardCounts.map(w=>`
+    <div class="dept-bar-row">
+      <span class="dept-bar-label">${w.name}</span>
+      <div class="dept-bar-track"><div class="dept-bar-fill" style="width:${Math.round(w.count/maxW*100)}%"></div></div>
+      <span class="dept-bar-count">${w.count}</span>
+    </div>`).join('');
+}
+
+// ─── INPATIENT: TABLE ────────────────────────────────────────────
+function ipRenderTable() {
+  const tbody = document.getElementById('ipFeedbackTbody');
+  const empty = document.getElementById('ipEmptyState');
+  const total = ipFiltered.length;
+  const pages = Math.max(1, Math.ceil(total/PER_PAGE));
+  if (ipPage > pages) ipPage = pages;
+  document.getElementById('ipPageInfo').textContent = `Page ${ipPage} of ${pages} (${total} records)`;
+  document.getElementById('ipPrevPage').disabled = ipPage <= 1;
+  document.getElementById('ipNextPage').disabled = ipPage >= pages;
+  const slice = ipFiltered.slice((ipPage-1)*PER_PAGE, ipPage*PER_PAGE);
+  if (!slice.length) { tbody.innerHTML=''; empty.classList.remove('hidden'); return; }
+  empty.classList.add('hidden');
+
+  const ratingBadge = v => {
+    if (!v) return '—';
+    const cls = v==='excellent'?'green':v==='good'?'teal':v==='fair'?'amber':'red';
+    return `<span class="badge ${cls}">${v}</span>`;
+  };
+  tbody.innerHTML = slice.map((r,i) => {
+    const idx = (ipPage-1)*PER_PAGE+i+1;
+    const date = r.submittedAt ? new Date(r.submittedAt).toLocaleDateString('en-KE') : '—';
+    const ward = r.ward ? r.ward.replace(/-/g,' ') : '—';
+    const stars = r.overall_rating ? '★'.repeat(parseInt(r.overall_rating)) : '—';
+    const npsV  = r.nps !== null && r.nps !== undefined ? r.nps : '—';
+    return `<tr onclick="ipOpenDetail(${ipAllData.indexOf(r)})">
+      <td style="color:var(--mid);font-size:.78rem;">${idx}</td>
+      <td style="white-space:nowrap;">${date}</td>
+      <td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${r.patient_name||r.email||'—'}</td>
+      <td><span class="badge teal">${ward}</span></td>
+      <td>${ratingBadge(r.doctor_service)}</td>
+      <td>${ratingBadge(r.nursing_care)}</td>
+      <td>${ratingBadge(r.meals)}</td>
+      <td style="text-align:center;">${r.cleanliness ? r.cleanliness+'/5' : '—'}</td>
+      <td>${ratingBadge(r.discharge_process?.replace(/-/g,' '))}</td>
+      <td style="text-align:center;">${stars}</td>
+      <td style="text-align:center;"><span class="badge ${npsClass(r.nps)}">${npsV}</span></td>
+      <td style="text-align:center;">${r.follow_up==='yes'?'<span class="badge purple">📞 Yes</span>':'<span class="badge" style="background:#f3f4f6;color:#6b7280;">Anonymous</span>'}</td>
+      <td><button class="btn" style="padding:5px 12px;background:#fef9e7;color:#c9a84c;font-size:.78rem;" onclick="event.stopPropagation();ipOpenDetail(${ipAllData.indexOf(r)})"><i class="fas fa-eye"></i></button></td>
+    </tr>`;
+  }).join('');
+}
+
+// ─── INPATIENT: DETAIL MODAL ─────────────────────────────────────
+function ipOpenDetail(idx) {
+  const r = ipAllData[idx];
+  if (!r) return;
+  const fieldRow = (lbl, val) => val ? `<div class="detail-item"><div class="lbl">${lbl}</div><div class="val">${val}</div></div>` : '';
+  document.getElementById('ipDetailBody').innerHTML = `
+    <div class="detail-grid">
+      ${fieldRow('Date Submitted', r.submittedAt ? new Date(r.submittedAt).toLocaleString('en-KE') : null)}
+      ${fieldRow('Patient Name', r.patient_name)}
+      ${fieldRow('Email', r.email)}
+      ${fieldRow('Phone', r.phone)}
+      ${fieldRow('Ward', r.ward?.replace(/-/g,' '))}
+      ${fieldRow('Admission Date', r.admission_date)}
+      ${fieldRow('Discharge Date', r.discharge_date)}
+      ${fieldRow('Admission Experience', r.admission_experience)}
+      ${fieldRow('Admission Wait', r.admission_wait?.replace(/-/g,' '))}
+      ${fieldRow('Doctor Service', r.doctor_service)}
+      ${fieldRow('Doctor Explanation', r.doctor_explanation?.replace(/-/g,' '))}
+      ${fieldRow('Doctor Visit Freq', r.doctor_visit_freq?.replace(/-/g,' '))}
+      ${fieldRow('Nursing Care', r.nursing_care)}
+      ${fieldRow('Nurse Response', r.nurse_response)}
+      ${fieldRow('Pain Management', r.pain_management?.replace(/-/g,' '))}
+      ${fieldRow('Housekeeping', r.housekeeping)}
+      ${fieldRow('Cleanliness', r.cleanliness ? r.cleanliness+'/5' : null)}
+      ${fieldRow('Meals', r.meals)}
+      ${fieldRow('Meals On Time', r.meals_on_time?.replace(/-/g,' '))}
+      ${fieldRow('Dignity', r.dignity)}
+      ${fieldRow('Billing', r.billing)}
+      ${fieldRow('Billing Issue', r.billing_text)}
+      ${fieldRow('Discharge Process', r.discharge_process?.replace(/-/g,' '))}
+      ${fieldRow('Discharge Instructions', r.discharge_instructions?.replace(/-/g,' '))}
+      ${fieldRow('Overall Rating', r.overall_rating ? r.overall_rating+'/5' : null)}
+      ${fieldRow('NPS Score', r.nps !== null && r.nps !== undefined ? r.nps+'/10' : null)}
+      ${fieldRow('Follow-up', r.follow_up)}
+      ${r.what_went_well ? `<div class="detail-item detail-full"><div class="lbl">What Went Well</div><div class="val">${r.what_went_well}</div></div>` : ''}
+      ${r.improvements ? `<div class="detail-item detail-full"><div class="lbl">Improvements</div><div class="val">${r.improvements}</div></div>` : ''}
+      ${r.admission_comments ? `<div class="detail-item detail-full"><div class="lbl">Admission Comments</div><div class="val">${r.admission_comments}</div></div>` : ''}
+      ${r.housekeeping_comments ? `<div class="detail-item detail-full"><div class="lbl">Housekeeping Comments</div><div class="val">${r.housekeeping_comments}</div></div>` : ''}
+      ${r.meals_comments ? `<div class="detail-item detail-full"><div class="lbl">Meal Comments</div><div class="val">${r.meals_comments}</div></div>` : ''}
+    </div>`;
+  document.getElementById('ipDetailModal').classList.add('active');
+}
+
+// ─── INPATIENT: EXPORT ───────────────────────────────────────────
+function exportInpatientCSV() {
+  if (!ipAllData.length) { alert('No inpatient data to export.'); return; }
+  const keys = ['submitted_at','patient_name','email','phone','ward','admission_date','discharge_date',
+    'admission_experience','admission_wait','doctor_service','nursing_care','pain_management',
+    'housekeeping','cleanliness','meals','meals_on_time','dignity','billing',
+    'discharge_process','overall_rating','nps','follow_up','contact_method',
+    'what_went_well','improvements'];
+  const csv = [keys.join(','), ...ipAllData.map(r => keys.map(k => JSON.stringify(r[k]??'')).join(','))].join('\n');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'oasis-inpatient-feedback.csv'; a.click();
+}
+
 // ─── EVENTS ──────────────────────────────────────────────────────
-document.getElementById('refreshBtn').addEventListener('click', init);
+document.getElementById('refreshBtn').addEventListener('click', () => {
+  const activeTab = document.querySelector('.tab-btn.active')?.id;
+  if (activeTab === 'tabInpatient') { loadAndRenderInpatient(); }
+  else { init(); }
+});
 document.getElementById('testDataBtn').addEventListener('click', addTestData);
-document.getElementById('exportBtn').addEventListener('click', () => document.getElementById('exportModal').classList.add('active'));
+document.getElementById('exportBtn').addEventListener('click', () => {
+  const activeTab = document.querySelector('.tab-btn.active')?.id;
+  if (activeTab === 'tabInpatient') { exportInpatientCSV(); }
+  else { document.getElementById('exportModal').classList.add('active'); }
+});
 document.getElementById('closeExport').addEventListener('click', () => document.getElementById('exportModal').classList.remove('active'));
 document.getElementById('cancelExport').addEventListener('click', () => document.getElementById('exportModal').classList.remove('active'));
 document.getElementById('confirmExport').addEventListener('click', doExport);
 document.getElementById('closeDetail').addEventListener('click', () => document.getElementById('detailModal').classList.remove('active'));
+document.getElementById('ipCloseDetail').addEventListener('click', () => document.getElementById('ipDetailModal').classList.remove('active'));
 
 ['fSource','fWaiting','fFollowUp','fNPS','fDate'].forEach(id => {
   document.getElementById(id).addEventListener('change', applyFilters);
@@ -802,8 +1207,20 @@ document.getElementById('clearFilters').addEventListener('click', () => {
   applyFilters();
 });
 
+// Inpatient filter events
+['ipfWard','ipfDoctor','ipfFollowUp','ipfNPS','ipfDate'].forEach(id => {
+  document.getElementById(id).addEventListener('change', ipApplyFilters);
+});
+document.getElementById('ipClearFilters').addEventListener('click', () => {
+  ['ipfWard','ipfDoctor','ipfFollowUp','ipfNPS'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('ipfDate').value = '';
+  ipApplyFilters();
+});
+
 document.getElementById('prevPage').addEventListener('click', () => { page--; renderTable(); });
 document.getElementById('nextPage').addEventListener('click', () => { page++; renderTable(); });
+document.getElementById('ipPrevPage').addEventListener('click', () => { ipPage--; ipRenderTable(); });
+document.getElementById('ipNextPage').addEventListener('click', () => { ipPage++; ipRenderTable(); });
 
 // close modals on backdrop click
 document.querySelectorAll('.modal-overlay').forEach(m => {
